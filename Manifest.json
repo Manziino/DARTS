@@ -1,0 +1,16 @@
+{
+  "name": "Darts Score Counter",
+  "short_name": "Darts",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#121214",
+  "theme-color": "#121214",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3076/3076840.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
