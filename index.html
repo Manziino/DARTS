@@ -6,89 +6,611 @@
     <title>Darts Master Scorer</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0b0e14">
-    <!--[span_0](start_span)[span_0](end_span)[span_1](start_span)[span_1](end_span)[span_2](start_span)[span_2](end_span) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background-color: #0b0e14; color: #f1f5f9; padding: 12px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #0b0e14; color: #f1f5f9; padding: 12px; -webkit-user-select: none; user-select: none; }
+        .container { max-width: 480px; margin: 0 auto; }
+        
+        h2 { color: #fff; font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        h3 { color: #94a3b8; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; margin-top: 15px; border-bottom: 1px solid #242c3d; padding-bottom: 5px;}
+        
+        .card { background: #131722; padding: 18px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); margin-bottom: 16px; border: 1px solid #1e2433; }
         .hidden { display: none !important; }
-        .card { background: #131722; padding: 18px; border-radius: 16px; margin-bottom: 16px; border: 1px solid #1e2433; }
-        .tab-btn { padding: 10px; background: #1e2433; display: inline-block; border-radius: 8px; cursor: pointer; color: #94a3b8; }
-        .tab-btn.active { color: #00e676; }
-        .btn-primary { width: 100%; padding: 15px; background: #00e676; border: none; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+        
+        /* Modern App Tabs - scrollable if too many */
+        .tab-container { display: flex; background: #1e2433; border-radius: 12px; padding: 4px; margin-bottom: 20px; overflow-x: auto; scrollbar-width: none;}
+        .tab-btn { flex: 1; text-align: center; padding: 10px; cursor: pointer; color: #94a3b8; font-weight: 700; font-size: 13px; border-radius: 8px; transition: all 0.2s; white-space: nowrap; }
+        .tab-btn.active { color: #00e676; background: #131722; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        
         .input-group { display: flex; gap: 8px; margin-bottom: 16px; }
-        input, select { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #242c3d; background: #0b0e14; color: white; }
-        .key { padding: 15px; background: #1e2433; border: none; color: #fff; border-radius: 5px; cursor: pointer; }
+        input, select { flex: 1; padding: 14px; border-radius: 10px; border: 1px solid #242c3d; background: #0b0e14; color: white; font-size: 15px; font-weight: 600; outline: none; transition: border-color 0.2s; }
+        input:focus, select:focus { border-color: #00e676; }
+        
+        .btn-add { background: #1e2433; color: #00e676; border: 1px solid #242c3d; width: 54px; font-size: 22px; font-weight: bold; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-primary { background: #00e676; color: #0b0e14; width: 100%; padding: 16px; font-size: 16px; border-radius: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 230, 118, 0.2); margin-top: 10px; }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-quick { padding: 8px 14px; font-size: 12px; background: #1e2433; border: 1px solid #242c3d; color: #94a3b8; border-radius: 8px; font-weight: 700; cursor: pointer; }
+        
+        /* Lists & Checkboxes */
+        .selection-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; max-height: 200px; overflow-y: auto; }
+        .checkbox-card { display: flex; align-items: center; background: #1c2130; padding: 12px; border-radius: 10px; border: 1px solid #242c3d; cursor: pointer; }
+        .checkbox-card input[type="checkbox"] { flex: 0 0 20px; height: 20px; width: 20px; accent-color: #00e676; margin-right: 12px; }
+        .checkbox-card-info { flex: 1; }
+        .checkbox-card-title { font-weight: 700; font-size: 15px; color: #fff; }
+        .checkbox-card-sub { font-size: 11px; color: #64748b; margin-top: 2px; }
+        
+        .data-card { background: #1c2130; padding: 14px; border-radius: 10px; border: 1px solid #242c3d; margin-bottom: 10px; }
+        .data-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .data-title { font-weight: 700; color: #fff; font-size: 16px; }
+        .remove-btn { color: #ff3d00; font-weight: 800; cursor: pointer; background: none; border: none; font-size: 16px; }
+        
+        .global-stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: 8px; }
+        .global-stat-box { background: #0b0e14; padding: 8px; border-radius: 6px; text-align: center; border: 1px solid #242c3d; }
+        .global-stat-val { font-size: 16px; font-weight: 800; color: #00e676; }
+        .global-stat-label { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; }
+        
+        /* Game Screen Scoreboard */
+        .scoreboard { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+        .player-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 14px 18px; background: #171d2c; border-radius: 14px; border: 2px solid transparent; transition: all 0.2s; }
+        .player-row.active { border-color: #00e676; background: rgba(0, 230, 118, 0.04); box-shadow: 0 0 15px rgba(0, 230, 118, 0.10); }
+        .team-title { font-size: 16px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 6px; }
+        .player-score { font-size: 34px; font-weight: 900; color: #cbd5e1; font-variant-numeric: tabular-nums; line-height: 1; }
+        .player-row.active .player-score { color: #00e676; font-size: 38px; }
+        
+        .stat-line { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 10.5px; color: #94a3b8; margin-top: 2px; }
+        .stat-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+
+        /* Darts Tracker & Numpad */
+        .header-game { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .turn-container { background: #171d2c; padding: 12px; border-radius: 14px; margin-bottom: 14px; border: 1px solid #242c3d; }
+        .dart-boxes { display: flex; justify-content: center; gap: 12px; margin-bottom: 8px; }
+        .dart-box { width: 64px; height: 46px; background: #0b0e14; border: 2px solid #242c3d; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #fff; }
+        .dart-box.filled { border-color: #00e676; color: #00e676; background: rgba(0, 230, 118, 0.02); }
+        .turn-total { text-align: center; font-size: 13px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .multipliers { display: flex; background: #1e2433; border-radius: 10px; padding: 3px; margin-bottom: 12px; gap: 2px; }
+        .btn-mult { flex: 1; padding: 12px; background: transparent; color: #94a3b8; border: none; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; transition: all 0.15s; text-transform: uppercase; }
+        .btn-mult.active { background: #00b0ff; color: #fff; box-shadow: 0 4px 10px rgba(0, 176, 255, 0.2); }
+        #btn-mult-2.active { background: #ff9100; color: #fff; box-shadow: 0 4px 10px rgba(255, 145, 0, 0.2); }
+        #btn-mult-3.active { background: #ff3d00; color: #fff; box-shadow: 0 4px 10px rgba(255, 61, 0, 0.2); }
+
+        .numpad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .key { background: #1e2433; color: #fff; font-size: 18px; font-weight: 700; border: none; border-radius: 10px; height: 52px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.1s, transform 0.05s; }
+        .key:active { background: #2b354a; transform: scale(0.96); }
+        .key.bull { background: #00c853; color: #fff; font-weight: 800; }
+        .key.miss { background: #374151; color: #9ca3af; }
+        .key.undo { background: #ff9100; color: #0b0e14; font-size: 20px; }
+        .key.ok { background: #00e676; color: #0b0e14; font-size: 18px; font-weight: 800; }
     </style>
 </head>
 <body>
+
 <div class="container">
     <div id="setup-screen" class="card">
-        <div id="tab-match" class="tab-btn active" onclick="switchView('match')">Match</div>
-        <div id="tab-hist" class="tab-btn" onclick="switchView('hist')">Historique</div>
-        
-        <div id="view-match">
-            <h3>Mode</h3>
-            <select id="mode"><option value="501">501</option><option value="301">301</option></select>
-            <h3>Joueurs</h3>
-            <div id="p-list"></div>
-            <input type="text" id="p-name" placeholder="Nom">
-            <button onclick="addPlayer()">Ajouter</button>
-            <button class="btn-primary" onclick="startMatch()">LANCER</button>
+        <div class="tab-container">
+            <div id="tab-btn-jouer" class="tab-btn active" onclick="switchTab('jouer')">Match</div>
+            <div id="tab-btn-joueurs" class="tab-btn" onclick="switchTab('joueurs')">Joueurs</div>
+            <div id="tab-btn-equipes" class="tab-btn" onclick="switchTab('equipes')">Équipes</div>
+            <div id="tab-btn-historique" class="tab-btn" onclick="switchTab('historique')">Historique</div>
         </div>
-        <div id="view-hist" class="hidden">
-            <h3>Historique</h3>
-            <div id="hist-list"></div>
-            <button onclick="clearHistory()">Vider tout</button>
+
+        <!-- ONGLET JOUER -->
+        <div id="setup-jouer">
+            <h3>Mode de Jeu</h3>
+            <div class="input-group">
+                <select id="game-mode-select" onchange="currentMode = parseInt(this.value)">
+                    <option value="301">301</option>
+                    <option value="501" selected>501</option>
+                    <option value="701">701</option>
+                </select>
+            </div>
+
+            <h3>Joueurs Solo</h3>
+            <div id="play-players-list" class="selection-list"></div>
+
+            <h3>Équipes</h3>
+            <div id="play-teams-list" class="selection-list"></div>
+
+            <h3>Ordre de Départ</h3>
+            <div class="input-group">
+                <select id="starting-team-select">
+                    <option value="random">🎲 Aléatoire</option>
+                </select>
+            </div>
+
+            <button class="btn-primary" onclick="startGame()">Lancer le match 🎯</button>
+        </div>
+
+        <!-- ONGLET JOUEURS (BASE DE DONNÉES) -->
+        <div id="setup-joueurs" class="hidden">
+            <div class="input-group">
+                <input type="text" id="new-player-input" placeholder="Nouveau joueur (ex: Luca)">
+                <button class="btn-add" onclick="createPlayer()">+</button>
+            </div>
+            <h3>Profils & Statistiques Globales</h3>
+            <div id="db-players-list"></div>
+        </div>
+
+        <!-- ONGLET ÉQUIPES -->
+        <div id="setup-equipes" class="hidden">
+            <div class="input-group">
+                <input type="text" id="new-team-input" placeholder="Nom de l'équipe (ex: Team Canon)">
+            </div>
+            <h3>Sélectionner les membres</h3>
+            <div id="team-creation-players-list" class="selection-list"></div>
+            <button class="btn-primary" onclick="createTeam()" style="background: #00b0ff; color: #fff;">Créer l'équipe</button>
+
+            <h3 style="margin-top: 20px;">Équipes existantes</h3>
+            <div id="db-teams-list"></div>
+        </div>
+
+        <!-- ONGLET HISTORIQUE -->
+        <div id="setup-historique" class="hidden">
+            <div id="history-list"></div>
+            <button class="btn-quick" onclick="clearHistory()" style="margin-top: 15px; color: #ff3d00; border-color: #ff3d00; width: 100%; padding: 12px;">Vider l'historique</button>
         </div>
     </div>
+
+    <!-- ÉCRAN DE JEU -->
     <div id="game-screen" class="card hidden">
-        <h2 id="score-display">501</h2>
-        <input type="number" id="dart-input">
-        <button onclick="submitScore()">OK</button>
-        <button onclick="quitGame()">Quitter</button>
+        <div class="header-game">
+            <h2 id="game-title">MODE 501</h2>
+            <button class="btn-quick" onclick="abortGame()">Quitter</button>
+        </div>
+        <div id="scoreboard" class="scoreboard"></div>
+        <div class="turn-container">
+            <div class="dart-boxes">
+                <div class="dart-box" id="dart-0"></div><div class="dart-box" id="dart-1"></div><div class="dart-box" id="dart-2"></div>
+            </div>
+            <div class="turn-total" id="turn-total">VOLÉE : 0</div>
+        </div>
+        <div class="multipliers">
+            <button class="btn-mult active" id="btn-mult-1" onclick="setMultiplier(1)">Simple</button>
+            <button class="btn-mult" id="btn-mult-2" onclick="setMultiplier(2)">Double</button>
+            <button class="btn-mult" id="btn-mult-3" onclick="setMultiplier(3)">Triple</button>
+        </div>
+        <div class="numpad">
+            <button class="key" onclick="pressNumber(1)">1</button><button class="key" onclick="pressNumber(2)">2</button><button class="key" onclick="pressNumber(3)">3</button><button class="key" onclick="pressNumber(4)">4</button>
+            <button class="key" onclick="pressNumber(5)">5</button><button class="key" onclick="pressNumber(6)">6</button><button class="key" onclick="pressNumber(7)">7</button><button class="key" onclick="pressNumber(8)">8</button>
+            <button class="key" onclick="pressNumber(9)">9</button><button class="key" onclick="pressNumber(10)">10</button><button class="key" onclick="pressNumber(11)">11</button><button class="key" onclick="pressNumber(12)">12</button>
+            <button class="key" onclick="pressNumber(13)">13</button><button class="key" onclick="pressNumber(14)">14</button><button class="key" onclick="pressNumber(15)">15</button><button class="key" onclick="pressNumber(16)">16</button>
+            <button class="key" onclick="pressNumber(17)">17</button><button class="key" onclick="pressNumber(18)">18</button><button class="key" onclick="pressNumber(19)">19</button><button class="key" onclick="pressNumber(20)">20</button>
+            <button class="key bull" onclick="pressNumber(25)">BULL</button><button class="key miss" onclick="pressNumber(0)">0</button><button class="key undo" onclick="undoTurn()">⌫</button><button class="key ok" onclick="confirmTurn()">OK</button>
+        </div>
     </div>
 </div>
+
 <script>
-    let players = JSON.parse(localStorage.getItem('players') || '[]');
-    let history = JSON.parse(localStorage.getItem('hist') || '[]');
+    let currentMode = 501;
+    let dbPlayers = [];
+    let dbTeams = [];
+    
+    let activeParticipants = []; // Mix of solo players and teams for the current match
+    let activeParticipantIndex = 0;
+    
+    let currentDarts = [];
+    let currentMultiplier = 1;
+    let historyStack = [];
 
-    function switchView(v) {
-        document.getElementById('view-match').classList.toggle('hidden', v !== 'match');
-        document.getElementById('view-hist').classList.toggle('hidden', v !== 'hist');
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(err => console.log(err)); }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        loadDatabase();
+        renderAllViews();
+    });
+
+    function switchTab(tab) {
+        ['jouer', 'joueurs', 'equipes', 'historique'].forEach(t => {
+            document.getElementById(`setup-${t}`).classList.add('hidden');
+            document.getElementById(`tab-btn-${t}`).classList.remove('active');
+        });
+        document.getElementById(`setup-${tab}`).classList.remove('hidden');
+        document.getElementById(`tab-btn-${tab}`).classList.add('active');
+        renderAllViews();
     }
 
-    function addPlayer() {
-        let name = document.getElementById('p-name').value;
-        if(name) { players.push({name, score: parseInt(document.getElementById('mode').value)}); localStorage.setItem('players', JSON.stringify(players)); render(); }
+    /* --- GESTION BASE DE DONNÉES --- */
+    function loadDatabase() {
+        dbPlayers = JSON.parse(localStorage.getItem('v5_players') || '[]');
+        dbTeams = JSON.parse(localStorage.getItem('v5_teams') || '[]');
+    }
+    function saveDatabase() {
+        localStorage.setItem('v5_players', JSON.stringify(dbPlayers));
+        localStorage.setItem('v5_teams', JSON.stringify(dbTeams));
     }
 
-    function startMatch() {
-        if(players.length > 0) { document.getElementById('setup-screen').classList.add('hidden'); document.getElementById('game-screen').classList.remove('hidden'); }
+    function createEmptyGlobalStats() {
+        return { dartsThrown: 0, doubles: 0, triples: 0, scoreTotal: 0, turnsPlayed: 0, bestTurn: 0, gamesPlayed: 0, wins: 0 };
     }
 
-    function submitScore() {
-        let pts = parseInt(document.getElementById('dart-input').value);
-        players[0].score -= pts;
-        if(players[0].score <= 0) {
-            history.unshift({date: new Date().toLocaleDateString(), winner: players[0].name});
-            localStorage.setItem('hist', JSON.stringify(history));
-            alert("Victoire !");
-            quitGame();
+    function createPlayer() {
+        const name = document.getElementById('new-player-input').value.trim();
+        if (!name) return;
+        if (dbPlayers.find(p => p.name.toLowerCase() === name.toLowerCase())) return alert("Ce joueur existe déjà !");
+        
+        dbPlayers.push({ id: 'p_' + Date.now(), name: name, globalStats: createEmptyGlobalStats() });
+        saveDatabase();
+        document.getElementById('new-player-input').value = "";
+        renderAllViews();
+    }
+
+    function deletePlayer(id) {
+        if (!confirm("Supprimer ce joueur et TOUTES ses statistiques à vie ?")) return;
+        dbPlayers = dbPlayers.filter(p => p.id !== id);
+        // Clean up teams containing this player
+        dbTeams = dbTeams.map(t => {
+            t.playerIds = t.playerIds.filter(pid => pid !== id);
+            return t;
+        }).filter(t => t.playerIds.length > 0);
+        saveDatabase();
+        renderAllViews();
+    }
+
+    function createTeam() {
+        const name = document.getElementById('new-team-input').value.trim();
+        const selectedIds = Array.from(document.querySelectorAll('#team-creation-players-list input:checked')).map(cb => cb.value);
+        if (!name) return alert("Nommez l'équipe !");
+        if (selectedIds.length === 0) return alert("Cochez au moins un joueur !");
+        
+        dbTeams.push({ id: 't_' + Date.now(), name: name, playerIds: selectedIds });
+        saveDatabase();
+        document.getElementById('new-team-input').value = "";
+        renderAllViews();
+    }
+
+    function deleteTeam(id) {
+        if (confirm("Supprimer l'équipe ? (Les joueurs et leurs stats seront conservés)")) {
+            dbTeams = dbTeams.filter(t => t.id !== id);
+            saveDatabase();
+            renderAllViews();
         }
-        document.getElementById('score-display').innerText = players[0].score;
     }
 
-    function render() {
-        document.getElementById('p-list').innerHTML = players.map(p => `<div>${p.name}</div>`).join('');
-        // Rendu sécurisé de l'historique
-        try {
-            document.getElementById('hist-list').innerHTML = history.map(h => `<div>${h.date} - ${h.winner}</div>`).join('');
-        } catch(e) { document.getElementById('hist-list').innerHTML = "Erreur historique"; }
+    /* --- RENDU DES VUES --- */
+    function calcGlobalDerivedStats(stats) {
+        if (stats.dartsThrown === 0) return { avg: "0.0", d: "0", t: "0" };
+        return {
+            avg: (stats.scoreTotal / stats.turnsPlayed).toFixed(1),
+            d: Math.round((stats.doubles / stats.dartsThrown) * 100),
+            t: Math.round((stats.triples / stats.dartsThrown) * 100)
+        };
     }
 
-    function clearHistory() { localStorage.removeItem('hist'); history=[]; render(); }
-    function quitGame() { location.reload(); }
-    render();
+    function renderAllViews() {
+        // Onglet Joueurs (DB)
+        const dbPlayersContainer = document.getElementById('db-players-list');
+        if (dbPlayers.length === 0) dbPlayersContainer.innerHTML = "<p style='color:#64748b; font-size:13px; text-align:center;'>Aucun joueur. Créez-en un au-dessus !</p>";
+        else dbPlayersContainer.innerHTML = dbPlayers.map(p => {
+            let s = calcGlobalDerivedStats(p.globalStats);
+            return `
+            <div class="data-card">
+                <div class="data-card-header">
+                    <div class="data-title">${p.name}</div>
+                    <button class="remove-btn" onclick="deletePlayer('${p.id}')">✕</button>
+                </div>
+                <div class="global-stats-grid">
+                    <div class="global-stat-box"><div class="global-stat-val">${s.avg}</div><div class="global-stat-label">Moyenne</div></div>
+                    <div class="global-stat-box"><div class="global-stat-val">${p.globalStats.bestTurn}</div><div class="global-stat-label">Max Volée</div></div>
+                    <div class="global-stat-box"><div class="global-stat-val" style="color:#ff9100;">${s.d}%</div><div class="global-stat-label">Doubles</div></div>
+                    <div class="global-stat-box"><div class="global-stat-val" style="color:#ff3d00;">${s.t}%</div><div class="global-stat-label">Triples</div></div>
+                    <div class="global-stat-box"><div class="global-stat-val" style="color:#cbd5e1;">${p.globalStats.gamesPlayed}</div><div class="global-stat-label">Parties</div></div>
+                    <div class="global-stat-box"><div class="global-stat-val" style="color:#cbd5e1;">${p.globalStats.wins}</div><div class="global-stat-label">Victoires</div></div>
+                </div>
+            </div>`;
+        }).join('');
+
+        // Onglet Equipes (DB Creation)
+        document.getElementById('team-creation-players-list').innerHTML = dbPlayers.map(p => `
+            <label class="checkbox-card">
+                <input type="checkbox" value="${p.id}">
+                <div class="checkbox-card-info"><div class="checkbox-card-title">${p.name}</div></div>
+            </label>
+        `).join('');
+
+        const dbTeamsContainer = document.getElementById('db-teams-list');
+        if (dbTeams.length === 0) dbTeamsContainer.innerHTML = "<p style='color:#64748b; font-size:13px; text-align:center;'>Aucune équipe.</p>";
+        else dbTeamsContainer.innerHTML = dbTeams.map(t => {
+            let pNames = t.playerIds.map(pid => dbPlayers.find(p=>p.id===pid)?.name || 'Inconnu').join(', ');
+            return `
+            <div class="data-card">
+                <div class="data-card-header">
+                    <div>
+                        <div class="data-title">${t.name}</div>
+                        <div style="font-size:12px; color:#94a3b8; margin-top:2px;">${pNames}</div>
+                    </div>
+                    <button class="remove-btn" onclick="deleteTeam('${t.id}')">✕</button>
+                </div>
+            </div>`;
+        }).join('');
+
+        // Onglet Jouer (Sélection Match)
+        document.getElementById('play-players-list').innerHTML = dbPlayers.map(p => `
+            <label class="checkbox-card">
+                <input type="checkbox" value="${p.id}" class="match-participant" data-type="solo" onchange="updateStartOrder()">
+                <div class="checkbox-card-info"><div class="checkbox-card-title">${p.name}</div></div>
+            </label>
+        `).join('');
+        
+        document.getElementById('play-teams-list').innerHTML = dbTeams.map(t => `
+            <label class="checkbox-card">
+                <input type="checkbox" value="${t.id}" class="match-participant" data-type="team" onchange="updateStartOrder()">
+                <div class="checkbox-card-info">
+                    <div class="checkbox-card-title">${t.name}</div>
+                    <div class="checkbox-card-sub">${t.playerIds.map(pid => dbPlayers.find(p=>p.id===pid)?.name).join(', ')}</div>
+                </div>
+            </label>
+        `).join('');
+        updateStartOrder();
+        
+        if(document.getElementById('setup-historique').classList.contains('hidden') === false) loadHistory();
+    }
+
+    function updateStartOrder() {
+        const select = document.getElementById('starting-team-select');
+        select.innerHTML = '<option value="random">🎲 Aléatoire</option>';
+        document.querySelectorAll('.match-participant:checked').forEach(cb => {
+            let name = cb.dataset.type === 'solo' ? dbPlayers.find(p=>p.id===cb.value).name : dbTeams.find(t=>t.id===cb.value).name;
+            select.innerHTML += `<option value="${cb.value}">${name}</option>`;
+        });
+    }
+
+    /* --- MOTEUR DE JEU --- */
+    function formatMatchStats(matchStats) {
+        if (matchStats.dartsThrown === 0) return "MOY: 0.0 | MAX: 0";
+        let avg = (matchStats.scoreTotal / matchStats.turnsPlayed).toFixed(1);
+        return `MOY: ${avg} | MAX: ${matchStats.bestTurn}`;
+    }
+
+    function startGame() {
+        const checkboxes = document.querySelectorAll('.match-participant:checked');
+        if (checkboxes.length < 1) return alert("Sélectionnez au moins un participant !");
+        
+        activeParticipants = Array.from(checkboxes).map(cb => {
+            let isTeam = cb.dataset.type === 'team';
+            let entity = isTeam ? dbTeams.find(t=>t.id===cb.value) : dbPlayers.find(p=>p.id===cb.value);
+            
+            // Build player list for this participant
+            let pList = [];
+            if(isTeam) {
+                entity.playerIds.forEach(pid => {
+                    let dbP = dbPlayers.find(p=>p.id===pid);
+                    if(dbP) pList.push({ id: dbP.id, name: dbP.name, matchStats: createEmptyGlobalStats() });
+                });
+            } else {
+                pList.push({ id: entity.id, name: entity.name, matchStats: createEmptyGlobalStats() });
+            }
+
+            return {
+                id: entity.id,
+                name: entity.name,
+                isTeam: isTeam,
+                players: pList,
+                rotationIndex: 0,
+                score: currentMode,
+                lastTurnStr: "En attente"
+            };
+        });
+
+        const startingChoice = document.getElementById('starting-team-select').value;
+        if (startingChoice === 'random') {
+            activeParticipantIndex = Math.floor(Math.random() * activeParticipants.length);
+        } else {
+            activeParticipantIndex = activeParticipants.findIndex(pt => pt.id === startingChoice);
+            if (activeParticipantIndex === -1) activeParticipantIndex = 0;
+        }
+
+        historyStack = []; currentDarts = []; setMultiplier(1);
+        document.getElementById('game-title').innerText = `MODE ${currentMode}`;
+        document.getElementById('setup-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
+        
+        updateScoreboard(); updateTurnUI();
+    }
+
+    function updateScoreboard() {
+        const container = document.getElementById('scoreboard');
+        container.innerHTML = "";
+        activeParticipants.forEach((part, index) => {
+            const isActive = (index === activeParticipantIndex);
+            
+            let playersHtml = part.players.map((pObj, pIdx) => {
+                let isCurrentPlayer = (isActive && pIdx === part.rotationIndex);
+                let color = isCurrentPlayer ? '#00e676' : '#94a3b8';
+                return `
+                    <div style="margin-top: 6px;">
+                        <div class="stat-name" style="color: ${color};">${isCurrentPlayer ? '🎯 ' : ''}${pObj.name}</div>
+                        <div class="stat-line">${formatMatchStats(pObj.matchStats)}</div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML += `
+                <div class="player-row ${isActive ? 'active' : ''}">
+                    <div style="flex:1;">
+                        <div class="team-title">${part.isTeam ? '👥 ' + part.name : '👤 ' + part.name}</div>
+                        ${playersHtml}
+                        <div style="font-size: 11px; color: #64748b; margin-top: 8px; font-style: italic;">Volée préc : ${part.lastTurnStr}</div>
+                    </div>
+                    <div class="player-score" style="margin-left: 15px;">${part.score}</div>
+                </div>
+            `;
+        });
+    }
+
+    function setMultiplier(val) {
+        currentMultiplier = val;
+        document.querySelectorAll('.btn-mult').forEach(b => b.classList.remove('active'));
+        document.getElementById(`btn-mult-${val}`).classList.add('active');
+    }
+
+    function pressNumber(num) {
+        if (currentDarts.length >= 3) return;
+        if (num === 25 && currentMultiplier === 3) currentMultiplier = 1; 
+        if (num === 0) currentMultiplier = 1;
+
+        let score = num * currentMultiplier;
+        let text = num === 0 ? "Miss" : num === 25 ? (currentMultiplier === 2 ? "D-Bull" : "Bull") : (currentMultiplier === 2 ? "D" + num : currentMultiplier === 3 ? "T" + num : num.toString());
+
+        currentDarts.push({ score, text });
+        setMultiplier(1); updateTurnUI();
+    }
+
+    function updateTurnUI() {
+        let turnTotal = 0;
+        for (let i = 0; i < 3; i++) {
+            let box = document.getElementById(`dart-${i}`);
+            if (i < currentDarts.length) {
+                box.innerText = currentDarts[i].text;
+                box.classList.add('filled');
+                turnTotal += currentDarts[i].score;
+            } else {
+                box.innerText = "";
+                box.classList.remove('filled');
+            }
+        }
+        document.getElementById('turn-total').innerText = `VOLÉE : ${turnTotal}`;
+    }
+
+    function undoTurn() {
+        if (currentDarts.length > 0) {
+            currentDarts.pop();
+            setMultiplier(1); updateTurnUI();
+        } else if (historyStack.length > 0) {
+            let lastState = historyStack.pop();
+            activeParticipants = JSON.parse(JSON.stringify(lastState.activeParticipants));
+            activeParticipantIndex = lastState.activeParticipantIndex;
+            currentDarts = []; setMultiplier(1);
+            updateScoreboard(); updateTurnUI();
+        }
+    }
+
+    function confirmTurn() {
+        if (currentDarts.length === 0) return;
+        
+        historyStack.push({ activeParticipants: JSON.parse(JSON.stringify(activeParticipants)), activeParticipantIndex });
+
+        let turnScore = currentDarts.reduce((acc, d) => acc + d.score, 0);
+        let part = activeParticipants[activeParticipantIndex];
+        let pObj = part.players[part.rotationIndex];
+
+        let actualPointsScored = turnScore;
+
+        if (part.score - turnScore === 0) {
+            part.score = 0;
+            part.lastTurnStr = `🎯 Vainqueur ! ${pObj.name} (${turnScore})`;
+        } else if (part.score - turnScore < 0) {
+            actualPointsScored = 0; 
+            part.lastTurnStr = `💥 Bust ! (${pObj.name})`;
+        } else {
+            part.score -= turnScore;
+            part.lastTurnStr = `${pObj.name} : ${currentDarts.map(d => d.text).join(' / ')} (${turnScore})`;
+        }
+
+        // Stats temporaires du match pour affichage
+        pObj.matchStats.turnsPlayed += 1;
+        pObj.matchStats.dartsThrown += currentDarts.length;
+        pObj.matchStats.scoreTotal += actualPointsScored;
+        if (actualPointsScored > pObj.matchStats.bestTurn) pObj.matchStats.bestTurn = actualPointsScored;
+        
+        currentDarts.forEach(d => {
+            if (d.text.startsWith('D')) pObj.matchStats.doubles += 1;
+            if (d.text.startsWith('T')) pObj.matchStats.triples += 1;
+        });
+
+        if (part.score === 0) {
+            updateScoreboard(); 
+            finalizeGame(part.id); // Intègre les stats dans la DB globale
+            alert(`🎉 VICTOIRE : ${part.name.toUpperCase()} !\nFélicitations à ${pObj.name} pour le finish !`);
+            return quitToMenu();
+        }
+
+        part.rotationIndex = (part.rotationIndex + 1) % part.players.length;
+        activeParticipantIndex = (activeParticipantIndex + 1) % activeParticipants.length;
+        currentDarts = []; setMultiplier(1);
+        
+        updateScoreboard(); updateTurnUI();
+    }
+
+    /* --- FINALISATION ET SAUVEGARDE GLOBALE --- */
+    function finalizeGame(winnerParticipantId) {
+        // Ajout à l'historique
+        let history = JSON.parse(localStorage.getItem('dartsHistory') || '[]');
+        history.unshift({
+            date: new Date().toLocaleString('fr-FR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit'}),
+            mode: currentMode,
+            winnerId: winnerParticipantId,
+            participants: JSON.parse(JSON.stringify(activeParticipants))
+        });
+        localStorage.setItem('dartsHistory', JSON.stringify(history));
+
+        // Transfert des stats du match vers les profils globaux
+        activeParticipants.forEach(part => {
+            let isParticipantWinner = (part.id === winnerParticipantId);
+            part.players.forEach(pMatchData => {
+                let dbProfile = dbPlayers.find(p => p.id === pMatchData.id);
+                if(dbProfile) {
+                    let g = dbProfile.globalStats;
+                    let m = pMatchData.matchStats;
+                    
+                    g.gamesPlayed += 1;
+                    if(isParticipantWinner) g.wins += 1;
+                    
+                    g.dartsThrown += m.dartsThrown;
+                    g.doubles += m.doubles;
+                    g.triples += m.triples;
+                    g.scoreTotal += m.scoreTotal;
+                    g.turnsPlayed += m.turnsPlayed;
+                    if(m.bestTurn > g.bestTurn) g.bestTurn = m.bestTurn;
+                }
+            });
+        });
+        saveDatabase();
+    }
+
+    function loadHistory() {
+        const list = document.getElementById('history-list');
+        let history = JSON.parse(localStorage.getItem('dartsHistory') || '[]');
+        if (history.length === 0) return list.innerHTML = "<p style='text-align:center; color:#64748b;'>Aucune partie.</p>";
+
+        list.innerHTML = history.map(game => `
+            <div class="data-card">
+                <div class="data-card-header">
+                    <strong style="color: #00e676;">MODE ${game.mode}</strong>
+                    <span style="color: #64748b; font-size:12px;">${game.date}</span>
+                </div>
+                <div>
+                    ${game.participants.map(part => `
+                        <div style="margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px dashed #242c3d;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+                                <span style="color: ${part.id === game.winnerId ? '#fff' : '#94a3b8'}; font-weight: ${part.id === game.winnerId ? '700' : '400'}">
+                                    ${part.name} ${part.id === game.winnerId ? '🏆' : ''}
+                                </span>
+                                <span style="color: ${part.score === 0 ? '#00e676' : '#cbd5e1'}">${part.score} pts restants</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function clearHistory() {
+        if (confirm("Voulez-vous supprimer tout l'historique de matchs ? (Les stats des joueurs ne seront pas touchées)")) {
+            localStorage.removeItem('dartsHistory'); loadHistory();
+        }
+    }
+
+    function abortGame() {
+        if(confirm("Quitter la partie en cours ? (Aucune statistique ne sera sauvegardée)")) quitToMenu();
+    }
+
+    function quitToMenu() {
+        document.getElementById('setup-screen').classList.remove('hidden');
+        document.getElementById('game-screen').classList.add('hidden');
+        renderAllViews();
+    }
 </script>
 </body>
 </html>
