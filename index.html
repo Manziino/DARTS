@@ -19,7 +19,7 @@
         .card { background: #131722; padding: 18px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); margin-bottom: 16px; border: 1px solid #1e2433; }
         .hidden { display: none !important; }
         
-        /* Modern App Tabs - scrollable if too many */
+        /* Modern App Tabs */
         .tab-container { display: flex; background: #1e2433; border-radius: 12px; padding: 4px; margin-bottom: 20px; overflow-x: auto; scrollbar-width: none;}
         .tab-btn { flex: 1; text-align: center; padding: 10px; cursor: pointer; color: #94a3b8; font-weight: 700; font-size: 13px; border-radius: 8px; transition: all 0.2s; white-space: nowrap; }
         .tab-btn.active { color: #00e676; background: #131722; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
@@ -83,9 +83,54 @@
         .key.miss { background: #374151; color: #9ca3af; }
         .key.undo { background: #ff9100; color: #0b0e14; font-size: 20px; }
         .key.ok { background: #00e676; color: #0b0e14; font-size: 18px; font-weight: 800; }
+        
+        /* Ranked Medals */
+        .medal { font-size: 26px; width: 45px; text-align: center; }
+        .ranked-row { display: flex; align-items: center; }
+
+        /* --- VICTORY MODAL ANIMATIONS --- */
+        #victory-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(11, 14, 20, 0.90);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .victory-content {
+            background: #131722; padding: 40px 20px; border-radius: 24px;
+            text-align: center; border: 2px solid #00e676;
+            box-shadow: 0 0 40px rgba(0, 230, 118, 0.3);
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            max-width: 90%;
+            width: 350px;
+        }
+        .victory-icon { font-size: 70px; margin-bottom: 15px; animation: bounce 2s infinite; }
+        .victory-title { color: #00e676; font-size: 30px; margin-bottom: 5px; text-transform: uppercase; font-weight: 900; text-shadow: 0 0 10px rgba(0, 230, 118, 0.5); }
+        .victory-sub { color: #f1f5f9; font-size: 16px; margin-bottom: 30px; font-weight: 600; }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
     </style>
 </head>
 <body>
+
+<!-- MODAL DE VICTOIRE -->
+<div id="victory-modal" class="hidden">
+    <div class="victory-content">
+        <div class="victory-icon">🏆</div>
+        <h2 id="victory-team" class="victory-title">TEAM NAME</h2>
+        <p id="victory-player" class="victory-sub">Félicitations au joueur !</p>
+        <button class="btn-primary" onclick="closeVictoryModal()">CONTINUER</button>
+    </div>
+</div>
 
 <div class="container">
     <div id="setup-screen" class="card">
@@ -93,7 +138,8 @@
             <div id="tab-btn-jouer" class="tab-btn active" onclick="switchTab('jouer')">Match</div>
             <div id="tab-btn-joueurs" class="tab-btn" onclick="switchTab('joueurs')">Joueurs</div>
             <div id="tab-btn-equipes" class="tab-btn" onclick="switchTab('equipes')">Équipes</div>
-            <div id="tab-btn-historique" class="tab-btn" onclick="switchTab('historique')">Historique</div>
+            <div id="tab-btn-ranked" class="tab-btn" onclick="switchTab('ranked')">Ranked</div>
+            <div id="tab-btn-historique" class="tab-btn" onclick="switchTab('historique')">Hist.</div>
         </div>
 
         <!-- ONGLET JOUER -->
@@ -146,10 +192,21 @@
             <div id="db-teams-list"></div>
         </div>
 
+        <!-- ONGLET RANKED -->
+        <div id="setup-ranked" class="hidden">
+            <div class="input-group" style="margin-bottom: 20px;">
+                <select id="ranked-type-select" onchange="renderRanked()">
+                    <option value="players">🏆 Classement Joueurs</option>
+                    <option value="teams">🛡️ Classement Équipes</option>
+                </select>
+            </div>
+            <div id="ranked-list"></div>
+        </div>
+
         <!-- ONGLET HISTORIQUE -->
         <div id="setup-historique" class="hidden">
             <div id="history-list"></div>
-            <button class="btn-quick" onclick="clearHistory()" style="margin-top: 15px; color: #ff3d00; border-color: #ff3d00; width: 100%; padding: 12px;">Vider l'historique</button>
+            <button class="btn-quick" onclick="clearHistory()" style="margin-top: 15px; color: #ff3d00; border-color: #ff3d00; width: 100%; padding: 12px;">Vider l'historique complet</button>
         </div>
     </div>
 
@@ -187,7 +244,7 @@
     let dbPlayers = [];
     let dbTeams = [];
     
-    let activeParticipants = []; // Mix of solo players and teams for the current match
+    let activeParticipants = []; 
     let activeParticipantIndex = 0;
     
     let currentDarts = [];
@@ -202,7 +259,7 @@
     });
 
     function switchTab(tab) {
-        ['jouer', 'joueurs', 'equipes', 'historique'].forEach(t => {
+        ['jouer', 'joueurs', 'equipes', 'ranked', 'historique'].forEach(t => {
             document.getElementById(`setup-${t}`).classList.add('hidden');
             document.getElementById(`tab-btn-${t}`).classList.remove('active');
         });
@@ -215,7 +272,12 @@
     function loadDatabase() {
         dbPlayers = JSON.parse(localStorage.getItem('v5_players') || '[]');
         dbTeams = JSON.parse(localStorage.getItem('v5_teams') || '[]');
+        
+        dbTeams.forEach(t => {
+            if (!t.globalStats) t.globalStats = { gamesPlayed: 0, wins: 0 };
+        });
     }
+    
     function saveDatabase() {
         localStorage.setItem('v5_players', JSON.stringify(dbPlayers));
         localStorage.setItem('v5_teams', JSON.stringify(dbTeams));
@@ -239,7 +301,6 @@
     function deletePlayer(id) {
         if (!confirm("Supprimer ce joueur et TOUTES ses statistiques à vie ?")) return;
         dbPlayers = dbPlayers.filter(p => p.id !== id);
-        // Clean up teams containing this player
         dbTeams = dbTeams.map(t => {
             t.playerIds = t.playerIds.filter(pid => pid !== id);
             return t;
@@ -254,7 +315,7 @@
         if (!name) return alert("Nommez l'équipe !");
         if (selectedIds.length === 0) return alert("Cochez au moins un joueur !");
         
-        dbTeams.push({ id: 't_' + Date.now(), name: name, playerIds: selectedIds });
+        dbTeams.push({ id: 't_' + Date.now(), name: name, playerIds: selectedIds, globalStats: { gamesPlayed: 0, wins: 0 } });
         saveDatabase();
         document.getElementById('new-team-input').value = "";
         renderAllViews();
@@ -279,7 +340,6 @@
     }
 
     function renderAllViews() {
-        // Onglet Joueurs (DB)
         const dbPlayersContainer = document.getElementById('db-players-list');
         if (dbPlayers.length === 0) dbPlayersContainer.innerHTML = "<p style='color:#64748b; font-size:13px; text-align:center;'>Aucun joueur. Créez-en un au-dessus !</p>";
         else dbPlayersContainer.innerHTML = dbPlayers.map(p => {
@@ -301,7 +361,6 @@
             </div>`;
         }).join('');
 
-        // Onglet Equipes (DB Creation)
         document.getElementById('team-creation-players-list').innerHTML = dbPlayers.map(p => `
             <label class="checkbox-card">
                 <input type="checkbox" value="${p.id}">
@@ -325,7 +384,6 @@
             </div>`;
         }).join('');
 
-        // Onglet Jouer (Sélection Match)
         document.getElementById('play-players-list').innerHTML = dbPlayers.map(p => `
             <label class="checkbox-card">
                 <input type="checkbox" value="${p.id}" class="match-participant" data-type="solo" onchange="updateStartOrder()">
@@ -344,7 +402,86 @@
         `).join('');
         updateStartOrder();
         
-        if(document.getElementById('setup-historique').classList.contains('hidden') === false) loadHistory();
+        if(!document.getElementById('setup-ranked').classList.contains('hidden')) renderRanked();
+        if(!document.getElementById('setup-historique').classList.contains('hidden')) loadHistory();
+    }
+
+    function renderRanked() {
+        const container = document.getElementById('ranked-list');
+        const type = document.getElementById('ranked-type-select').value;
+        
+        if (type === 'players') {
+            let sortedPlayers = [...dbPlayers].sort((a, b) => {
+                let wA = a.globalStats.wins || 0;
+                let wB = b.globalStats.wins || 0;
+                if (wB !== wA) return wB - wA; 
+                
+                let gpA = a.globalStats.gamesPlayed || 0;
+                let gpB = b.globalStats.gamesPlayed || 0;
+                let rA = gpA ? wA / gpA : 0;
+                let rB = gpB ? wB / gpB : 0;
+                if (rB !== rA) return rB - rA; 
+
+                let avgA = a.globalStats.turnsPlayed ? a.globalStats.scoreTotal / a.globalStats.turnsPlayed : 0;
+                let avgB = b.globalStats.turnsPlayed ? b.globalStats.scoreTotal / b.globalStats.turnsPlayed : 0;
+                return avgB - avgA; 
+            });
+            
+            if(sortedPlayers.length === 0) {
+                container.innerHTML = "<p style='text-align:center; color:#64748b;'>Aucun joueur classé.</p>";
+                return;
+            }
+            
+            container.innerHTML = sortedPlayers.map((p, index) => {
+                let s = calcGlobalDerivedStats(p.globalStats);
+                let winRate = p.globalStats.gamesPlayed ? Math.round((p.globalStats.wins / p.globalStats.gamesPlayed) * 100) : 0;
+                let medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `<span style="color:#64748b;">${index + 1}.</span>`;
+                return `
+                <div class="data-card ranked-row">
+                    <div class="medal">${medal}</div>
+                    <div style="flex:1; margin-left:10px;">
+                        <div style="font-weight:700; color:#fff; font-size:16px;">${p.name}</div>
+                        <div style="font-size:12px; color:#94a3b8; margin-top:4px;">
+                            <strong style="color:#00e676;">${p.globalStats.wins}V</strong> - ${winRate}% de victoire <br>
+                            Moy: ${s.avg} | Max: ${p.globalStats.bestTurn}
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+            
+        } else {
+            let sortedTeams = [...dbTeams].sort((a, b) => {
+                let sA = a.globalStats || {wins:0, gamesPlayed:0};
+                let sB = b.globalStats || {wins:0, gamesPlayed:0};
+                if (sB.wins !== sA.wins) return sB.wins - sA.wins; 
+                
+                let rA = sA.gamesPlayed ? sA.wins / sA.gamesPlayed : 0;
+                let rB = sB.gamesPlayed ? sB.wins / sB.gamesPlayed : 0;
+                return rB - rA; 
+            });
+            
+            if(sortedTeams.length === 0) {
+                container.innerHTML = "<p style='text-align:center; color:#64748b;'>Aucune équipe classée.</p>";
+                return;
+            }
+            
+            container.innerHTML = sortedTeams.map((t, index) => {
+                let stats = t.globalStats || {wins:0, gamesPlayed:0};
+                let winRate = stats.gamesPlayed ? Math.round((stats.wins / stats.gamesPlayed) * 100) : 0;
+                let medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `<span style="color:#64748b;">${index + 1}.</span>`;
+                return `
+                <div class="data-card ranked-row">
+                    <div class="medal">${medal}</div>
+                    <div style="flex:1; margin-left:10px;">
+                        <div style="font-weight:700; color:#fff; font-size:16px;">${t.name}</div>
+                        <div style="font-size:12px; color:#94a3b8; margin-top:4px;">
+                            <strong style="color:#00e676;">${stats.wins}V</strong> - ${winRate}% de victoire <br>
+                            Joués : ${stats.gamesPlayed} matchs
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
     }
 
     function updateStartOrder() {
@@ -371,7 +508,6 @@
             let isTeam = cb.dataset.type === 'team';
             let entity = isTeam ? dbTeams.find(t=>t.id===cb.value) : dbPlayers.find(p=>p.id===cb.value);
             
-            // Build player list for this participant
             let pList = [];
             if(isTeam) {
                 entity.playerIds.forEach(pid => {
@@ -508,7 +644,6 @@
             part.lastTurnStr = `${pObj.name} : ${currentDarts.map(d => d.text).join(' / ')} (${turnScore})`;
         }
 
-        // Stats temporaires du match pour affichage
         pObj.matchStats.turnsPlayed += 1;
         pObj.matchStats.dartsThrown += currentDarts.length;
         pObj.matchStats.scoreTotal += actualPointsScored;
@@ -521,9 +656,14 @@
 
         if (part.score === 0) {
             updateScoreboard(); 
-            finalizeGame(part.id); // Intègre les stats dans la DB globale
-            alert(`🎉 VICTOIRE : ${part.name.toUpperCase()} !\nFélicitations à ${pObj.name} pour le finish !`);
-            return quitToMenu();
+            finalizeGame(part.id); 
+            
+            // Affichage de la nouvelle modale de victoire animée
+            document.getElementById('victory-team').innerText = part.name.toUpperCase();
+            document.getElementById('victory-player').innerText = `Félicitations à ${pObj.name} pour le finish !`;
+            document.getElementById('victory-modal').classList.remove('hidden');
+            
+            return; // Bloque la fonction pour ne pas passer au tour suivant
         }
 
         part.rotationIndex = (part.rotationIndex + 1) % part.players.length;
@@ -533,9 +673,12 @@
         updateScoreboard(); updateTurnUI();
     }
 
-    /* --- FINALISATION ET SAUVEGARDE GLOBALE --- */
+    function closeVictoryModal() {
+        document.getElementById('victory-modal').classList.add('hidden');
+        quitToMenu();
+    }
+
     function finalizeGame(winnerParticipantId) {
-        // Ajout à l'historique
         let history = JSON.parse(localStorage.getItem('dartsHistory') || '[]');
         history.unshift({
             date: new Date().toLocaleString('fr-FR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit'}),
@@ -545,9 +688,18 @@
         });
         localStorage.setItem('dartsHistory', JSON.stringify(history));
 
-        // Transfert des stats du match vers les profils globaux
         activeParticipants.forEach(part => {
             let isParticipantWinner = (part.id === winnerParticipantId);
+            
+            if (part.isTeam) {
+                let dbTeam = dbTeams.find(t => t.id === part.id);
+                if (dbTeam) {
+                    if (!dbTeam.globalStats) dbTeam.globalStats = { gamesPlayed: 0, wins: 0 };
+                    dbTeam.globalStats.gamesPlayed += 1;
+                    if (isParticipantWinner) dbTeam.globalStats.wins += 1;
+                }
+            }
+            
             part.players.forEach(pMatchData => {
                 let dbProfile = dbPlayers.find(p => p.id === pMatchData.id);
                 if(dbProfile) {
@@ -572,32 +724,60 @@
     function loadHistory() {
         const list = document.getElementById('history-list');
         let history = JSON.parse(localStorage.getItem('dartsHistory') || '[]');
-        if (history.length === 0) return list.innerHTML = "<p style='text-align:center; color:#64748b;'>Aucune partie.</p>";
+        
+        if (!Array.isArray(history) || history.length === 0) {
+            list.innerHTML = "<p style='text-align:center; color:#64748b;'>Aucune partie.</p>";
+            return;
+        }
 
-        list.innerHTML = history.map(game => `
-            <div class="data-card">
-                <div class="data-card-header">
-                    <strong style="color: #00e676;">MODE ${game.mode}</strong>
-                    <span style="color: #64748b; font-size:12px;">${game.date}</span>
-                </div>
-                <div>
-                    ${game.participants.map(part => `
-                        <div style="margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px dashed #242c3d;">
-                            <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
-                                <span style="color: ${part.id === game.winnerId ? '#fff' : '#94a3b8'}; font-weight: ${part.id === game.winnerId ? '700' : '400'}">
-                                    ${part.name} ${part.id === game.winnerId ? '🏆' : ''}
-                                </span>
-                                <span style="color: ${part.score === 0 ? '#00e676' : '#cbd5e1'}">${part.score} pts restants</span>
+        try {
+            list.innerHTML = history.map(game => {
+                if (!game.participants) return "";
+                
+                return `
+                <div class="data-card">
+                    <div class="data-card-header">
+                        <strong style="color: #00e676;">MODE ${game.mode || '??'}</strong>
+                        <span style="color: #64748b; font-size:12px;">${game.date || ''}</span>
+                    </div>
+                    <div>
+                        ${game.participants.map(part => {
+                            let isWinner = (part.id === game.winnerId);
+                            
+                            let playersStatsHtml = "";
+                            if (part.players) {
+                                playersStatsHtml = part.players.map(p => {
+                                    let s = p.matchStats || p.stats;
+                                    if(!s) return "";
+                                    let avg = s.turnsPlayed > 0 ? (s.scoreTotal / s.turnsPlayed).toFixed(1) : "0.0";
+                                    return \`<div style="font-size: 11px; color: #64748b; font-family: monospace; margin-left: 10px;">↳ \${p.name}: MOY: \${avg} | MAX: \${s.bestTurn}</div>\`;
+                                }).join('');
+                            }
+
+                            return `
+                            <div style="margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px dashed #242c3d;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+                                    <span style="color: ${isWinner ? '#fff' : '#94a3b8'}; font-weight: ${isWinner ? '700' : '400'}">
+                                        ${part.name || 'Joueur'} ${isWinner ? '🏆' : ''}
+                                    </span>
+                                    <span style="color: ${part.score === 0 ? '#00e676' : '#cbd5e1'}">${part.score} pts restants</span>
+                                </div>
+                                ${playersStatsHtml}
                             </div>
-                        </div>
-                    `).join('')}
+                            `;
+                        }).join('')}
+                    </div>
                 </div>
-            </div>
-        `).join('');
+                `;
+            }).join('');
+        } catch(e) {
+            console.error("Erreur historique :", e);
+            list.innerHTML = "<p style='text-align:center; color:#ff3d00;'>Historique corrompu.</p>";
+        }
     }
 
     function clearHistory() {
-        if (confirm("Voulez-vous supprimer tout l'historique de matchs ? (Les stats des joueurs ne seront pas touchées)")) {
+        if (confirm("Voulez-vous supprimer tout l'historique de matchs ? (Les stats globales ne seront pas touchées)")) {
             localStorage.removeItem('dartsHistory'); loadHistory();
         }
     }
