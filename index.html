@@ -3,112 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Darts Score Counter</title>
+    <title>Darts Master Scorer</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0a0a0c">
+    <meta name="theme-color" content="#0b0e14">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: #0a0a0c; color: #e2e8f0; padding: 10px; -webkit-user-select: none; user-select: none; }
-        .container { max-width: 500px; margin: 0 auto; }
-        h2, h3 { color: #fff; margin-bottom: 15px; }
-        .card { background: #141418; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); margin-bottom: 20px; }
+        body { background-color: #0b0e14; color: #f1f5f9; padding: 12px; -webkit-user-select: none; user-select: none; }
+        .container { max-width: 480px; margin: 0 auto; }
+        
+        /* Typography & Custom Elements */
+        h2 { color: #fff; font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        h3 { color: #94a3b8; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; margin-top: 5px; }
+        
+        /* UI Cards & Containers */
+        .card { background: #131722; padding: 18px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); margin-bottom: 16px; border: 1px solid #1e2433; }
         .hidden { display: none !important; }
         
-        /* Setup & Tabs */
-        .tab-container { display: flex; margin-bottom: 20px; border-bottom: 2px solid #2d2d35; }
-        .tab-btn { flex: 1; text-align: center; padding: 12px; cursor: pointer; color: #a0aec0; font-weight: bold; font-size: 16px; }
-        .tab-btn.active { color: #4caf50; border-bottom: 3px solid #4caf50; }
+        /* Modern App Tabs */
+        .tab-container { display: flex; background: #1e2433; border-radius: 12px; padding: 4px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; text-align: center; padding: 10px; cursor: pointer; color: #94a3b8; font-weight: 700; font-size: 14px; border-radius: 8px; transition: all 0.2s; }
+        .tab-btn.active { color: #00e676; background: #131722; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         
-        .mode-selector, .setup-buttons { display: flex; gap: 10px; margin-bottom: 15px; }
-        .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; background: #2d2d35; color: white; }
-        .btn-active { background: #4caf50; color: #0a0a0c; }
-        .btn-primary { background: #4caf50; color: #0a0a0c; width: 100%; padding: 15px; font-size: 18px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; }
-        .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #2d2d35; background: #0a0a0c; color: white; font-size: 16px; }
-        .player-badge { display: flex; justify-content: space-between; align-items: center; background: #0a0a0c; padding: 12px; border-radius: 6px; margin-bottom: 8px; border-left: 4px solid #4caf50; }
-        .remove-btn { color: #f44336; font-weight: bold; cursor: pointer; background: none; border: none; font-size: 18px; }
-        .btn-quick { padding: 8px; font-size: 14px; background: #1a1a1f; border: 1px solid #2d2d35; color: #a0aec0; border-radius: 6px; font-weight: bold; width: 100%; cursor: pointer;}
-
-        /* Game Screen Scoreboard */
-        .scoreboard { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
-        .player-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: #1e1e24; border-radius: 8px; border: 2px solid transparent; }
-        .player-row.active { border-color: #4caf50; background: rgba(76, 175, 80, 0.1); }
-        .player-name { font-size: 18px; font-weight: bold; }
-        .player-last-turn { font-size: 12px; color: #a0aec0; margin-top: 4px; }
-        .player-score { font-size: 38px; font-weight: 900; color: #fff; }
-        .player-row.active .player-score { color: #4caf50; }
-
-        /* Dart-by-Dart Area */
-        .turn-container { background: #1e1e24; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; }
-        .dart-boxes { display: flex; justify-content: center; gap: 10px; margin-bottom: 5px; }
-        .dart-box { width: 60px; height: 50px; background: #0a0a0c; border: 2px solid #2d2d35; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: white; }
-        .dart-box.filled { border-color: #4caf50; }
-        .turn-total { font-size: 14px; color: #a0aec0; font-weight: bold; }
-
-        /* Keypad Multipliers */
-        .multipliers { display: flex; gap: 8px; margin-bottom: 10px; }
-        .btn-mult { flex: 1; padding: 12px; background: #2d2d35; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; }
-        .btn-mult.active { background: #4caf50; color: #0a0a0c; }
-        #btn-mult-2.active { background: #ff9800; color: #0a0a0c; }
-        #btn-mult-3.active { background: #f44336; color: white; }
-
-        /* Dart Keypad Grid */
-        .numpad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-        .key { background: #2d2d35; color: white; font-size: 18px; font-weight: bold; border: none; border-radius: 6px; height: 55px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .key:active { background: #555; }
-        .key.bull { background: #2e7d32; }
-        .key.miss { background: #d32f2f; }
-        .key.undo { background: #ff9800; color: #0a0a0c; font-size: 22px; }
-        .key.ok { background: #4caf50; color: #0a0a0c; font-size: 20px; }
+        /* Forms & Inputs */
+        .input-group { display: flex; gap: 8px; margin-bottom: 16px; }
+        input, select { flex: 1; padding: 14px; border-radius: 10px; border: 1px solid #242c3d; background: #0b0e14; color: white; font-size: 15px; font-weight: 600; outline: none; transition: border-color 0.2s; }
+        input:focus, select:focus { border-color: #00e676; }
         
-        .header-game { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        /* Buttons */
+        .btn-add { background: #1e2433; color: #00e676; border: 1px solid #242c3d; width: 54px; font-size: 22px; font-weight: bold; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-primary { background: #00e676; color: #0b0e14; width: 100%; padding: 16px; font-size: 16px; border-radius: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 230, 118, 0.2); transition: transform 0.1s; }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-quick { padding: 8px 14px; font-size: 12px; background: #1e2433; border: 1px solid #242c3d; color: #94a3b8; border-radius: 8px; font-weight: 700; cursor: pointer; }
+        
+        /* Team & Player Management Lists */
+        .team-selector-list { display: flex; flex-direction: column; gap: 8px; margin: 12px 0 20px 0; max-height: 220px; overflow-y: auto; }
+        .team-checkbox-card { display: flex; align-items: center; background: #1c2130; padding: 14px; border-radius: 10px; border: 1px solid #242c3d; cursor: pointer; }
+        .team-checkbox-card input[type="checkbox"] { flex: 0 0 20px; height: 20px; width: 20px; accent-color: #00e676; margin-right: 12px; }
+        .team-info-inline { flex: 1; }
+        .team-name-inline { font-weight: 700; font-size: 15px; color: #fff; }
+        .team-players-inline { font-size: 12px; color: #64748b; margin-top: 2px; }
+        
+        /* Temporary creation items */
+        .temp-item { display: flex; justify-content: space-between; align-items: center; background: #0b0e14; padding: 10px 14px; border-radius: 8px; margin-bottom: 6px; border-left: 3px solid #00e676; font-size: 14px; font-weight: 600; }
+        .remove-btn { color: #ff3d00; font-weight: 800; cursor: pointer; background: none; border: none; font-size: 16px; padding: 2px 6px; }
+        
+        /* Saved Teams Manager List */
+        .saved-teams-container { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+        .saved-team-card { display: flex; justify-content: space-between; align-items: center; background: #1c2130; padding: 12px 14px; border-radius: 10px; border: 1px solid #242c3d; }
+        
+        /* Game Screen Header */
+        .header-game { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        
+        /* High Fidelity Scoreboard */
+        .scoreboard { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+        .player-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; background: #171d2c; border-radius: 14px; border: 2px solid transparent; transition: all 0.2s; }
+        .player-row.active { border-color: #00e676; background: rgba(0, 230, 118, 0.06); box-shadow: 0 0 15px rgba(0, 230, 118, 0.15); }
+        .team-title { font-size: 16px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.3px; }
+        .player-sub { font-size: 13px; color: #94a3b8; margin-top: 3px; font-weight: 500; }
+        .player-sub strong { color: #00e676; font-weight: 700; }
+        .player-last-turn { font-size: 11px; color: #64748b; margin-top: 4px; font-style: italic; }
+        .player-score { font-size: 34px; font-weight: 900; color: #cbd5e1; font-variant-numeric: tabular-nums; }
+        .player-row.active .player-score { color: #00e676; font-size: 38px; }
+
+        /* Dart Tracker Visuals */
+        .turn-container { background: #171d2c; padding: 12px; border-radius: 14px; margin-bottom: 14px; border: 1px solid #242c3d; }
+        .dart-boxes { display: flex; justify-content: center; gap: 12px; margin-bottom: 8px; }
+        .dart-box { width: 64px; height: 46px; background: #0b0e14; border: 2px solid #242c3d; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #fff; }
+        .dart-box.filled { border-color: #00e676; color: #00e676; background: rgba(0, 230, 118, 0.02); }
+        .turn-total { text-align: center; font-size: 13px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Modern Segmented Multipliers */
+        .multipliers { display: flex; background: #1e2433; border-radius: 10px; padding: 3px; margin-bottom: 12px; gap: 2px; }
+        .btn-mult { flex: 1; padding: 12px; background: transparent; color: #94a3b8; border: none; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; transition: all 0.15s; text-transform: uppercase; }
+        .btn-mult.active { background: #00b0ff; color: #fff; box-shadow: 0 4px 10px rgba(0, 176, 255, 0.2); }
+        #btn-mult-2.active { background: #ff9100; color: #fff; box-shadow: 0 4px 10px rgba(255, 145, 0, 0.2); }
+        #btn-mult-3.active { background: #ff3d00; color: #fff; box-shadow: 0 4px 10px rgba(255, 61, 0, 0.2); }
+
+        /* Professional Grid Numpad */
+        .numpad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .key { background: #1e2433; color: #fff; font-size: 18px; font-weight: 700; border: none; border-radius: 10px; height: 52px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.1s, transform 0.05s; }
+        .key:active { background: #2b354a; transform: scale(0.96); }
+        .key.bull { background: #00c853; color: #fff; font-weight: 800; }
+        .key.miss { background: #374151; color: #9ca3af; }
+        .key.undo { background: #ff9100; color: #0b0e14; font-size: 20px; }
+        .key.ok { background: #00e676; color: #0b0e14; font-size: 18px; font-weight: 800; }
+        
+        /* History Layout */
+        .history-card { background: #1c2130; padding: 14px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #242c3d; }
+        .history-header { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #242c3d; padding-bottom: 6px; font-size: 13px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- ÉCRAN D'ACCUEIL & HISTORIQUE -->
     <div id="setup-screen" class="card">
         <div class="tab-container">
-            <div id="tab-btn-jouer" class="tab-btn active" onclick="switchTab('jouer')">Partie</div>
+            <div id="tab-btn-jouer" class="tab-btn active" onclick="switchTab('jouer')">Match</div>
+            <div id="tab-btn-equipes" class="tab-btn" onclick="switchTab('equipes')">Équipes</div>
             <div id="tab-btn-historique" class="tab-btn" onclick="switchTab('historique')">Historique</div>
         </div>
 
         <div id="setup-jouer">
-            <h3>Mode de Jeu</h3>
-            <div class="mode-selector">
-                <button class="btn btn-active" onclick="setMode(301)">301</button>
-                <button class="btn" onclick="setMode(501)">501</button>
+            <h3>1. Mode de Jeu</h3>
+            <div class="input-group" style="margin-bottom: 20px;">
+                <select id="game-mode-select" onchange="currentMode = parseInt(this.value)">
+                    <option value="301">Mode 301</option>
+                    <option value="501" selected>Mode 501</option>
+                    <option value="701">Mode 701</option>
+                </select>
             </div>
 
-            <h3>Joueurs</h3>
+            <h3>2. Sélectionner les Équipes pour le match</h3>
+            <div id="team-selector-list" class="team-selector-list">
+                </div>
+
+            <h3>3. Ordre de Départ</h3>
+            <div class="input-group" style="margin-bottom: 24px;">
+                <select id="starting-team-select">
+                    <option value="random">🎲 Aléatoire</option>
+                    </select>
+            </div>
+
+            <button class="btn-primary" onclick="startGame()">Lancer le match 🎯</button>
+        </div>
+
+        <div id="setup-equipes" class="hidden">
+            <h3>Créer une Équipe / Joueur Solo</h3>
+            <div class="input-group" style="margin-bottom: 10px;">
+                <input type="text" id="team-name-input" placeholder="Nom de l'équipe (ex: Team Canon)">
+            </div>
             <div class="input-group">
-                <input type="text" id="player-input" placeholder="Nom du joueur">
-                <button class="btn btn-active" onclick="addPlayer()" style="flex: 0 0 60px;">+</button>
+                <input type="text" id="player-name-input" placeholder="Ajouter un joueur à l'équipe">
+                <button class="btn-add" onclick="addPlayerToTempTeam()">+</button>
             </div>
             
-            <div class="setup-buttons">
-                <button class="btn-quick" onclick="loadDuo('TEAM CANON', 'Adversaires')">⚡ TEAM CANON</button>
-                <button class="btn-quick" onclick="loadDuo('Luca', 'Loick')">👥 Luca vs Loick</button>
-            </div>
+            <div id="temp-players-list" style="margin-bottom: 14px;"></div>
+            <button class="btn-primary" onclick="saveTeam()" style="margin-bottom: 24px; background: #00b0ff; color: #fff; box-shadow: 0 4px 15px rgba(0, 176, 255, 0.2);">Enregistrer l'Équipe</button>
 
-            <div id="players-list" style="margin: 15px 0;"></div>
-            <button class="btn-primary" onclick="startGame()">JOUER 🎯</button>
+            <h3>Vos Équipes Enregistrées</h3>
+            <div id="saved-teams-list" class="saved-teams-container">
+                </div>
         </div>
 
         <div id="setup-historique" class="hidden">
             <div id="history-list"></div>
-            <button class="btn-quick" onclick="clearHistory()" style="margin-top: 15px; color: #f44336; border-color: #f44336;">Vider l'historique</button>
+            <button class="btn-quick" onclick="clearHistory()" style="margin-top: 15px; color: #ff3d00; border-color: #ff3d00; width: 100%; padding: 12px;">Vider l'historique</button>
         </div>
     </div>
 
-    <!-- ÉCRAN DE JEU -->
     <div id="game-screen" class="card hidden">
         <div class="header-game">
-            <h2 id="game-title" style="margin: 0; color: #4caf50;">501</h2>
-            <button class="btn-quick" onclick="resetGame()" style="width: auto;">Quitter</button>
+            <h2 id="game-title">MODE 501</h2>
+            <button class="btn-quick" onclick="resetGame()">Quitter</button>
         </div>
 
         <div id="scoreboard" class="scoreboard"></div>
@@ -119,11 +167,11 @@
                 <div class="dart-box" id="dart-1"></div>
                 <div class="dart-box" id="dart-2"></div>
             </div>
-            <div class="turn-total" id="turn-total">Volée en cours : 0</div>
+            <div class="turn-total" id="turn-total">VOLÉE : 0</div>
         </div>
 
         <div class="multipliers">
-            <button class="btn-mult active" id="btn-mult-1" onclick="setMultiplier(1)">x1</button>
+            <button class="btn-mult active" id="btn-mult-1" onclick="setMultiplier(1)">Simple</button>
             <button class="btn-mult" id="btn-mult-2" onclick="setMultiplier(2)">Double</button>
             <button class="btn-mult" id="btn-mult-3" onclick="setMultiplier(3)">Triple</button>
         </div>
@@ -163,85 +211,189 @@
 </div>
 
 <script>
-    let currentMode = 301;
-    let players = [];
-    let activePlayerIndex = 0;
+    let currentMode = 501;
+    let savedTeams = [];
+    let tempPlayers = [];
     
-    let currentDarts = []; 
+    let playingTeams = [];
+    let activeTeamIndex = 0;
+    
+    let currentDarts = [];
     let currentMultiplier = 1;
-    let historyStack = []; 
+    let historyStack = [];
 
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
     }
 
+    window.addEventListener('DOMContentLoaded', () => {
+        loadTeamsFromStorage();
+        renderTeamSelectionList();
+        renderSavedTeamsList();
+    });
+
     function switchTab(tab) {
-        if(tab === 'jouer') {
-            document.getElementById('setup-jouer').classList.remove('hidden');
-            document.getElementById('setup-historique').classList.add('hidden');
-            document.getElementById('tab-btn-jouer').classList.add('active');
-            document.getElementById('tab-btn-historique').classList.remove('active');
-        } else {
-            document.getElementById('setup-jouer').classList.add('hidden');
-            document.getElementById('setup-historique').classList.remove('hidden');
-            document.getElementById('tab-btn-jouer').classList.remove('active');
-            document.getElementById('tab-btn-historique').classList.add('active');
+        document.getElementById('setup-jouer').classList.add('hidden');
+        document.getElementById('setup-equipes').classList.add('hidden');
+        document.getElementById('setup-historique').classList.add('hidden');
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        
+        document.getElementById(`setup-${tab}`).classList.remove('hidden');
+        document.getElementById(`tab-btn-${tab}`).classList.add('active');
+        
+        if (tab === 'jouer') {
+            renderTeamSelectionList();
+        } else if (tab === 'equipes') {
+            renderSavedTeamsList();
+        } else if (tab === 'historique') {
             loadHistory();
         }
     }
 
-    function setMode(mode) {
-        currentMode = mode;
-        document.querySelectorAll('.mode-selector .btn').forEach(btn => {
-            btn.classList.toggle('btn-active', parseInt(btn.innerText) === mode);
-        });
+    function loadTeamsFromStorage() {
+        savedTeams = JSON.parse(localStorage.getItem('dartsTeams') || '[]');
     }
 
-    function renderSetupPlayers() {
-        const container = document.getElementById('players-list');
-        container.innerHTML = "";
-        players.forEach((p, index) => {
-            container.innerHTML += `
-                <div class="player-badge">
-                    <span>${p.name}</span>
-                    <button class="remove-btn" onclick="removePlayer(${index})">✕</button>
-                </div>
-            `;
-        });
+    function saveTeamsToStorage() {
+        localStorage.setItem('dartsTeams', JSON.stringify(savedTeams));
     }
 
-    function addPlayer() {
-        const input = document.getElementById('player-input');
-        const name = input.value.trim();
-        if (name) {
-            players.push({ name: name, score: currentMode, lastTurn: "En attente" });
+    function addPlayerToTempTeam() {
+        const input = document.getElementById('player-name-input');
+        const pName = input.value.trim();
+        if (pName) {
+            tempPlayers.push(pName);
             input.value = "";
-            renderSetupPlayers();
+            renderTempPlayers();
         }
     }
 
-    function removePlayer(index) {
-        players.splice(index, 1);
-        renderSetupPlayers();
+    function removeTempPlayer(index) {
+        tempPlayers.splice(index, 1);
+        renderTempPlayers();
     }
 
-    function loadDuo(p1, p2) {
-        players = [
-            { name: p1, score: currentMode, lastTurn: "En attente" },
-            { name: p2, score: currentMode, lastTurn: "En attente" }
-        ];
-        renderSetupPlayers();
+    function renderTempPlayers() {
+        const container = document.getElementById('temp-players-list');
+        container.innerHTML = tempPlayers.map((p, i) => `
+            <div class="temp-item">
+                <span>${p}</span>
+                <span class="remove-btn" onclick="removeTempPlayer(${i})">✕</span>
+            </div>
+        `).join('');
+    }
+
+    function saveTeam() {
+        const nameInput = document.getElementById('team-name-input');
+        const teamName = nameInput.value.trim();
+        
+        if (!teamName) return alert("Veuillez donner un nom à l'équipe !");
+        if (tempPlayers.length === 0) return alert("Ajoutez au moins un joueur dans l'équipe !");
+        
+        savedTeams.push({
+            id: Date.now().toString(),
+            name: teamName,
+            players: [...tempPlayers]
+        });
+        
+        saveTeamsToStorage();
+        nameInput.value = "";
+        tempPlayers = [];
+        renderTempPlayers();
+        renderSavedTeamsList();
+        alert("Équipe enregistrée avec succès !");
+    }
+
+    function deleteTeam(id) {
+        if (confirm("Supprimer cette équipe définitivement ?")) {
+            savedTeams = savedTeams.filter(t => t.id !== id);
+            saveTeamsToStorage();
+            renderSavedTeamsList();
+        }
+    }
+
+    function renderSavedTeamsList() {
+        const container = document.getElementById('saved-teams-list');
+        if (savedTeams.length === 0) {
+            container.innerHTML = "<p style='text-align:center; color:#64748b; font-size:14px; margin-top:10px;'>Aucune équipe créée pour le moment.</p>";
+            return;
+        }
+        container.innerHTML = savedTeams.map(t => `
+            <div class="saved-team-card">
+                <div>
+                    <div style="font-weight:700; color:#fff;">${t.name}</div>
+                    <div style="font-size:12px; color:#94a3b8; margin-top:2px;">Membres : ${t.players.join(', ')}</div>
+                </div>
+                <button class="remove-btn" onclick="deleteTeam('${t.id}')">✕</button>
+            </div>
+        `).join('');
+    }
+
+    function renderTeamSelectionList() {
+        const container = document.getElementById('team-selector-list');
+        if (savedTeams.length === 0) {
+            container.innerHTML = "<p style='text-align:center; color:#64748b; font-size:14px; margin:20px 0;'>Créez d'abord des équipes dans l'onglet 'Équipes' !</p>";
+            return;
+        }
+        container.innerHTML = savedTeams.map((t, idx) => `
+            <label class="team-checkbox-card" for="chk-${t.id}">
+                <input type="checkbox" id="chk-${t.id}" value="${idx}" onchange="updateStartingOrderOptions()">
+                <div class="team-info-inline">
+                    <div class="team-name-inline">${t.name}</div>
+                    <div class="team-players-inline">Joueurs : ${t.players.join(', ')}</div>
+                </div>
+            </label>
+        `).join('');
+        updateStartingOrderOptions();
+    }
+
+    function getSelectedTeamIndices() {
+        const checkboxes = document.querySelectorAll('#team-selector-list input[type="checkbox"]:checked');
+        return Array.from(checkboxes).map(cb => parseInt(cb.value));
+    }
+
+    function updateStartingOrderOptions() {
+        const select = document.getElementById('starting-team-select');
+        select.innerHTML = '<option value="random">🎲 Aléatoire</option>';
+        
+        const indices = getSelectedTeamIndices();
+        indices.forEach(idx => {
+            const team = savedTeams[idx];
+            select.innerHTML += `<option value="${idx}">${team.name}</option>`;
+        });
     }
 
     function startGame() {
-        if (players.length < 1) return alert("Ajoute au moins un joueur !");
-        players.forEach(p => p.score = currentMode);
-        activePlayerIndex = 0;
+        const selectedIndices = getSelectedTeamIndices();
+        if (selectedIndices.length < 1) {
+            return alert("Sélectionnez au moins une équipe (ou un joueur solo) pour jouer !");
+        }
+        
+        playingTeams = selectedIndices.map(idx => {
+            const t = savedTeams[idx];
+            return {
+                name: t.name,
+                players: [...t.players],
+                playerIndex: 0,
+                score: currentMode,
+                lastTurn: "En attente"
+            };
+        });
+
+        const startingChoice = document.getElementById('starting-team-select').value;
+        if (startingChoice === 'random') {
+            activeTeamIndex = Math.floor(Math.random() * playingTeams.length);
+        } else {
+            const targetIdx = parseInt(startingChoice);
+            activeTeamIndex = playingTeams.findIndex(t => t.name === savedTeams[targetIdx].name);
+            if (activeTeamIndex === -1) activeTeamIndex = 0;
+        }
+
         historyStack = [];
         currentDarts = [];
         setMultiplier(1);
         
-        document.getElementById('game-title').innerText = "Mode " + currentMode;
+        document.getElementById('game-title').innerText = `MODE ${currentMode}`;
         document.getElementById('setup-screen').classList.add('hidden');
         document.getElementById('game-screen').classList.remove('hidden');
         
@@ -252,15 +404,17 @@
     function updateScoreboard() {
         const container = document.getElementById('scoreboard');
         container.innerHTML = "";
-        players.forEach((p, index) => {
-            const isActive = index === activePlayerIndex ? 'active' : '';
+        playingTeams.forEach((team, index) => {
+            const isActive = index === activeTeamIndex ? 'active' : '';
+            const currentPlayerName = team.players[team.playerIndex];
             container.innerHTML += `
                 <div class="player-row ${isActive}">
-                    <div>
-                        <div class="player-name">${p.name}</div>
-                        <div class="player-last-turn">${p.lastTurn}</div>
+                    <div class="player-info">
+                        <div class="team-title">${team.name}</div>
+                        <div class="player-sub">${isActive ? `🎯 Au tour de : <strong style="color:#00e676;">${currentPlayerName}</strong>` : `Suivant : ${currentPlayerName}`}</div>
+                        <div class="player-last-turn">${team.lastTurn}</div>
                     </div>
-                    <div class="player-score">${p.score}</div>
+                    <div class="player-score">${team.score}</div>
                 </div>
             `;
         });
@@ -273,31 +427,31 @@
     }
 
     function pressNumber(num) {
-        if(currentDarts.length >= 3) return; 
+        if (currentDarts.length >= 3) return;
 
-        if(num === 25 && currentMultiplier === 3) currentMultiplier = 1;
-        if(num === 0) currentMultiplier = 1; 
+        if (num === 25 && currentMultiplier === 3) currentMultiplier = 1; 
+        if (num === 0) currentMultiplier = 1;
 
         let score = num * currentMultiplier;
         let text = num.toString();
         
-        if(num === 0) text = "Miss";
-        else if(num === 25) text = currentMultiplier === 2 ? "D-Bull" : "Bull";
+        if (num === 0) text = "Miss";
+        else if (num === 25) text = currentMultiplier === 2 ? "D-Bull" : "Bull";
         else {
-            if(currentMultiplier === 2) text = "D" + num;
-            if(currentMultiplier === 3) text = "T" + num;
+            if (currentMultiplier === 2) text = "D" + num;
+            if (currentMultiplier === 3) text = "T" + num;
         }
 
         currentDarts.push({ score, text });
-        setMultiplier(1); 
+        setMultiplier(1);
         updateTurnUI();
     }
 
     function updateTurnUI() {
         let turnTotal = 0;
-        for(let i=0; i<3; i++) {
+        for (let i = 0; i < 3; i++) {
             let box = document.getElementById(`dart-${i}`);
-            if(i < currentDarts.length) {
+            if (i < currentDarts.length) {
                 box.innerText = currentDarts[i].text;
                 box.classList.add('filled');
                 turnTotal += currentDarts[i].score;
@@ -306,18 +460,18 @@
                 box.classList.remove('filled');
             }
         }
-        document.getElementById('turn-total').innerText = `Volée en cours : ${turnTotal}`;
+        document.getElementById('turn-total').innerText = `VOLÉE : ${turnTotal}`;
     }
 
     function undoTurn() {
-        if(currentDarts.length > 0) {
+        if (currentDarts.length > 0) {
             currentDarts.pop();
             setMultiplier(1);
             updateTurnUI();
-        } else if(historyStack.length > 0) {
+        } else if (historyStack.length > 0) {
             let lastState = historyStack.pop();
-            players = JSON.parse(JSON.stringify(lastState.players));
-            activePlayerIndex = lastState.activePlayerIndex;
+            playingTeams = JSON.parse(JSON.stringify(lastState.playingTeams));
+            activeTeamIndex = lastState.activeTeamIndex;
             currentDarts = [];
             setMultiplier(1);
             updateScoreboard();
@@ -326,33 +480,36 @@
     }
 
     function confirmTurn() {
-        if(currentDarts.length === 0) return; 
+        if (currentDarts.length === 0) return;
 
         historyStack.push({
-            players: JSON.parse(JSON.stringify(players)),
-            activePlayerIndex: activePlayerIndex
+            playingTeams: JSON.parse(JSON.stringify(playingTeams)),
+            activeTeamIndex: activeTeamIndex
         });
 
         let turnScore = currentDarts.reduce((acc, d) => acc + d.score, 0);
-        let player = players[activePlayerIndex];
+        let team = playingTeams[activeTeamIndex];
+        let currentPlayer = team.players[team.playerIndex];
 
-        if(player.score - turnScore === 0) {
-            player.score = 0;
-            player.lastTurn = currentDarts.map(d => d.text).join(' / ') + ` (${turnScore})`;
+        if (team.score - turnScore === 0) {
+            team.score = 0;
+            team.lastTurn = `🎯 Vainqueur ! ${currentPlayer} (${turnScore})`;
             updateScoreboard();
             saveGameToHistory();
-            alert(`🎉 VICTOIRE DE ${player.name.toUpperCase()} !`);
+            alert(`🎉 VICTOIRE DE L'ÉQUIPE : ${team.name.toUpperCase()} !\nFélicitations à ${currentPlayer} pour le finish !`);
             resetGame();
             return;
-        } else if (player.score - turnScore < 0) {
-            player.lastTurn = "Bust ! (Dépassement)";
+        } else if (team.score - turnScore < 0) {
+            team.lastTurn = `💥 Bust ! (${currentPlayer})`;
         } else {
-            player.score -= turnScore;
-            player.lastTurn = currentDarts.map(d => d.text).join(' / ') + ` (${turnScore})`;
+            team.score -= turnScore;
+            team.lastTurn = `${currentPlayer} : ${currentDarts.map(d => d.text).join(' / ')} (${turnScore})`;
         }
 
+        team.playerIndex = (team.playerIndex + 1) % team.players.length;
+        activeTeamIndex = (activeTeamIndex + 1) % playingTeams.length;
+        
         currentDarts = [];
-        activePlayerIndex = (activePlayerIndex + 1) % players.length;
         setMultiplier(1);
         updateScoreboard();
         updateTurnUI();
@@ -360,11 +517,11 @@
 
     function saveGameToHistory() {
         let history = JSON.parse(localStorage.getItem('dartsHistory') || '[]');
-        let winner = players.find(p => p.score === 0);
+        let winner = playingTeams.find(t => t.score === 0);
         let gameRecord = {
             date: new Date().toLocaleString('fr-FR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit'}),
             mode: currentMode,
-            players: players.map(p => ({ name: p.name, score: p.score })),
+            teams: playingTeams.map(t => ({ name: t.name, score: t.score })),
             winner: winner ? winner.name : "Inconnu"
         };
         history.unshift(gameRecord);
@@ -375,24 +532,24 @@
         const list = document.getElementById('history-list');
         let history = JSON.parse(localStorage.getItem('dartsHistory') || '[]');
         
-        if(history.length === 0) {
-            list.innerHTML = "<p style='text-align:center; color:#a0aec0; margin-top:20px;'>Aucune partie enregistrée pour le moment.</p>";
+        if (history.length === 0) {
+            list.innerHTML = "<p style='text-align:center; color:#64748b; margin-top:20px; font-size:14px;'>Aucune partie dans l'historique.</p>";
             return;
         }
 
         list.innerHTML = history.map(game => `
-            <div style="background: #1e1e24; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #2d2d35;">
-                <div style="display:flex; justify-content:space-between; margin-bottom: 10px; border-bottom: 1px solid #2d2d35; padding-bottom: 5px;">
-                    <strong style="color: #4caf50;">Mode ${game.mode}</strong>
-                    <span style="font-size: 12px; color: #a0aec0;">${game.date}</span>
+            <div class="history-card">
+                <div class="history-header">
+                    <strong style="color: #00e676;">MODE ${game.mode}</strong>
+                    <span style="color: #64748b;">${game.date}</span>
                 </div>
-                <div style="font-size: 15px;">
-                    ${game.players.map(p => `
-                        <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
-                            <span style="color: ${p.name === game.winner ? '#fff' : '#a0aec0'}; font-weight: ${p.name === game.winner ? 'bold' : 'normal'}">
-                                ${p.name} ${p.name === game.winner ? '🏆' : ''}
+                <div style="font-size: 14px;">
+                    ${game.teams.map(t => `
+                        <div style="display:flex; justify-content:space-between; margin-bottom: 5px;">
+                            <span style="color: ${t.name === game.winner ? '#fff' : '#94a3b8'}; font-weight: ${t.name === game.winner ? '700' : '400'}">
+                                ${t.name} ${t.name === game.winner ? '🏆' : ''}
                             </span>
-                            <span style="color: ${p.score === 0 ? '#4caf50' : '#e2e8f0'}">${p.score} restants</span>
+                            <span style="color: ${t.score === 0 ? '#00e676' : '#cbd5e1'}">${t.score} restants</span>
                         </div>
                     `).join('')}
                 </div>
@@ -401,7 +558,7 @@
     }
 
     function clearHistory() {
-        if(confirm("Veux-tu vraiment supprimer tout l'historique de tes parties ?")) {
+        if (confirm("Voulez-vous supprimer tout l'historique définitivement ?")) {
             localStorage.removeItem('dartsHistory');
             loadHistory();
         }
@@ -410,6 +567,7 @@
     function resetGame() {
         document.getElementById('setup-screen').classList.remove('hidden');
         document.getElementById('game-screen').classList.add('hidden');
+        renderTeamSelectionList();
     }
 </script>
 </body>
