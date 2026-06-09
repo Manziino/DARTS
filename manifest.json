@@ -1,10 +1,10 @@
 {
-  "name": "Darts Score Counter",
-  "short_name": "Darts",
+  "name": "Darts Master Scorer",
+  "short_name": "DartsMaster",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#121214",
-  "theme-color": "#121214",
+  "background_color": "#0b0e14",
+  "theme-color": "#0b0e14",
   "orientation": "portrait",
   "icons": [
     {
