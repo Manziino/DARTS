@@ -273,10 +273,21 @@
         dbPlayers = JSON.parse(localStorage.getItem('v5_players') || '[]');
         dbTeams = JSON.parse(localStorage.getItem('v5_teams') || '[]');
         
+        // SÉCURITÉ ANTI-CRASH : Ajoute des stats vides aux anciens joueurs
+        dbPlayers.forEach(p => {
+            if (!p.globalStats) {
+                p.globalStats = { dartsThrown: 0, doubles: 0, triples: 0, scoreTotal: 0, turnsPlayed: 0, bestTurn: 0, gamesPlayed: 0, wins: 0 };
+            }
+        });
+        
+        // SÉCURITÉ ANTI-CRASH : Ajoute des stats vides aux anciennes équipes
         dbTeams.forEach(t => {
-            if (!t.globalStats) t.globalStats = { gamesPlayed: 0, wins: 0 };
+            if (!t.globalStats) {
+                t.globalStats = { gamesPlayed: 0, wins: 0 };
+            }
         });
     }
+
     
     function saveDatabase() {
         localStorage.setItem('v5_players', JSON.stringify(dbPlayers));
