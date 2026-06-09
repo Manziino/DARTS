@@ -218,9 +218,24 @@
     let currentMultiplier = 1;
     let historyStack = [];
 
-    // --- MOTEUR AUDIO ---
+        // --- MOTEUR AUDIO ---
     let audioCtx;
     let isAudioOn = true;
+    let callerVoice = null;
+
+    // Charger les voix pour trouver un commentateur masculin britannique
+    function loadVoices() {
+        let voices = window.speechSynthesis.getVoices();
+        // On cherche en priorité une voix d'homme en anglais britannique
+        callerVoice = voices.find(v => v.lang === 'en-GB' && (v.name.includes('Male') || v.name.includes('Daniel') || v.name.includes('Oliver')))
+                   || voices.find(v => v.lang === 'en-GB')
+                   || voices.find(v => v.lang.startsWith('en'));
+    }
+
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+        loadVoices(); // Initialisation immédiate
+    }
 
     function initAudio() {
         if (!audioCtx) {
@@ -256,18 +271,26 @@
     function announceCaller(text, is180 = false) {
         if (!isAudioOn || !('speechSynthesis' in window)) return;
         window.speechSynthesis.cancel(); // Stoppe le son précédent
+        
         let msg = new SpeechSynthesisUtterance(text);
-        msg.lang = 'en-GB'; // Accent British de la PDC
+        
+        // Applique la voix masculine britannique si trouvée
+        if (callerVoice) msg.voice = callerVoice;
+        msg.lang = 'en-GB'; 
+        
+        // Réglage "Annonceur de compétition"
         if (is180) {
-            msg.rate = 0.85; // Un peu plus lent pour l'impact
-            msg.pitch = 1.3; // Plus aigu/enthousiaste
+            msg.rate = 0.9;  // Le "One Hundred and Eighty" est un peu allongé
+            msg.pitch = 1.3; // Excitation : la voix part dans les aigus
         } else {
-            msg.rate = 1.0;
-            msg.pitch = 1.0;
+            msg.rate = 0.95; // Rythme naturel et posé
+            msg.pitch = 0.7; // Voix très grave, type commentateur
         }
+        
         window.speechSynthesis.speak(msg);
     }
     // ----------------------
+
 
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(err => console.log(err)); }
 
