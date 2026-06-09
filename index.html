@@ -5,110 +5,159 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Darts Score Counter</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#121214">
+    <meta name="theme-color" content="#0a0a0c">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: #121214; color: #e2e8f0; padding: 15px; -webkit-user-select: none; user-select: none; }
+        body { background-color: #0a0a0c; color: #e2e8f0; padding: 10px; -webkit-user-select: none; user-select: none; }
         .container { max-width: 500px; margin: 0 auto; }
-        h1, h2, h3 { text-align: center; color: #00adb5; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
-        .card { background: #1e1e24; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); margin-bottom: 20px; border: 1px solid #2d2d35; }
+        h2, h3 { color: #fff; margin-bottom: 15px; }
+        .card { background: #141418; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); margin-bottom: 20px; }
         .hidden { display: none !important; }
         
-        /* Setup Screen */
+        /* Setup & Tabs */
+        .tab-container { display: flex; margin-bottom: 20px; border-bottom: 2px solid #2d2d35; }
+        .tab-btn { flex: 1; text-align: center; padding: 12px; cursor: pointer; color: #a0aec0; font-weight: bold; font-size: 16px; }
+        .tab-btn.active { color: #4caf50; border-bottom: 3px solid #4caf50; }
+        
         .mode-selector, .setup-buttons { display: flex; gap: 10px; margin-bottom: 15px; }
-        .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: all 0.2s; background: #2d2d35; color: #e2e8f0; }
-        .btn-active { background: #00adb5; color: #121214; }
-        .btn-primary { background: #ff5722; color: white; width: 100%; margin-top: 10px; padding: 15px; font-size: 18px; }
+        .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; background: #2d2d35; color: white; }
+        .btn-active { background: #4caf50; color: #0a0a0c; }
+        .btn-primary { background: #4caf50; color: #0a0a0c; width: 100%; padding: 15px; font-size: 18px; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; }
         .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #2d2d35; background: #121214; color: white; font-size: 16px; }
-        .player-badge { display: flex; justify-content: space-between; align-items: center; background: #121214; padding: 10px 15px; border-radius: 6px; margin-bottom: 8px; border-left: 4px solid #00adb5; }
-        .remove-btn { color: #ff5722; font-weight: bold; cursor: pointer; background: none; border: none; font-size: 16px; }
+        input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #2d2d35; background: #0a0a0c; color: white; font-size: 16px; }
+        .player-badge { display: flex; justify-content: space-between; align-items: center; background: #0a0a0c; padding: 12px; border-radius: 6px; margin-bottom: 8px; border-left: 4px solid #4caf50; }
+        .remove-btn { color: #f44336; font-weight: bold; cursor: pointer; background: none; border: none; font-size: 18px; }
+        .btn-quick { padding: 8px; font-size: 14px; background: #1a1a1f; border: 1px solid #2d2d35; color: #a0aec0; border-radius: 6px; font-weight: bold; width: 100%; cursor: pointer;}
 
-        /* Game Screen */
-        .scoreboard { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
-        .player-row { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #2d2d35; border-radius: 8px; border: 2px solid transparent; }
-        .player-row.active { border-color: #00adb5; background: #1e1e24; box-shadow: 0 0 10px rgba(0, 173, 181, 0.2); }
-        .player-info { display: flex; flex-direction: column; }
+        /* Game Screen Scoreboard */
+        .scoreboard { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
+        .player-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: #1e1e24; border-radius: 8px; border: 2px solid transparent; }
+        .player-row.active { border-color: #4caf50; background: rgba(76, 175, 80, 0.1); }
         .player-name { font-size: 18px; font-weight: bold; }
         .player-last-turn { font-size: 12px; color: #a0aec0; margin-top: 4px; }
-        .player-score { font-size: 32px; font-weight: 900; color: #fff; }
-        .player-row.active .player-score { color: #00adb5; }
+        .player-score { font-size: 38px; font-weight: 900; color: #fff; }
+        .player-row.active .player-score { color: #4caf50; }
 
-        /* Keypad */
-        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
-        .key { background: #2d2d35; font-size: 24px; font-weight: bold; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: none; color: white; cursor: pointer; }
-        .key:active { background: #00adb5; color: #121214; }
-        .display-area { background: #121214; padding: 15px; text-align: center; font-size: 28px; font-weight: bold; border-radius: 8px; margin-bottom: 15px; color: #ff5722; border: 1px solid #2d2d35; min-height: 65px; }
+        /* Dart-by-Dart Area */
+        .turn-container { background: #1e1e24; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center; }
+        .dart-boxes { display: flex; justify-content: center; gap: 10px; margin-bottom: 5px; }
+        .dart-box { width: 60px; height: 50px; background: #0a0a0c; border: 2px solid #2d2d35; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; color: white; }
+        .dart-box.filled { border-color: #4caf50; }
+        .turn-total { font-size: 14px; color: #a0aec0; font-weight: bold; }
+
+        /* Keypad Multipliers */
+        .multipliers { display: flex; gap: 8px; margin-bottom: 10px; }
+        .btn-mult { flex: 1; padding: 12px; background: #2d2d35; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; }
+        .btn-mult.active { background: #4caf50; color: #0a0a0c; }
+        #btn-mult-2.active { background: #ff9800; color: #0a0a0c; }
+        #btn-mult-3.active { background: #f44336; color: white; }
+
+        /* Dart Keypad Grid */
+        .numpad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        .key { background: #2d2d35; color: white; font-size: 18px; font-weight: bold; border: none; border-radius: 6px; height: 55px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .key:active { background: #555; }
+        .key.bull { background: #2e7d32; }
+        .key.miss { background: #d32f2f; }
+        .key.undo { background: #ff9800; color: #0a0a0c; font-size: 22px; }
+        .key.ok { background: #4caf50; color: #0a0a0c; font-size: 20px; }
         
-        /* Quick Buttons */
-        .quick-scores { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
-        .btn-quick { padding: 8px; font-size: 14px; background: #1a1a1f; border: 1px solid #2d2d35; color: #a0aec0; border-radius: 6px; font-weight: bold; }
+        .header-game { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <!-- ÉCRAN D'ACCUEIL & HISTORIQUE -->
     <div id="setup-screen" class="card">
-        <h1>Darts Counter</h1>
-        
-        <h3>1. Mode de Jeu</h3>
-        <div class="mode-selector">
-            <button class="btn btn-active" onclick="setMode(301)">301</button>
-            <button class="btn" onclick="setMode(501)">501</button>
+        <div class="tab-container">
+            <div id="tab-btn-jouer" class="tab-btn active" onclick="switchTab('jouer')">Partie</div>
+            <div id="tab-btn-historique" class="tab-btn" onclick="switchTab('historique')">Historique</div>
         </div>
 
-        <h3>2. Joueurs / Équipes</h3>
-        <div class="input-group">
-            <input type="text" id="player-input" placeholder="Nom du joueur ou de l'équipe">
-            <button class="btn btn-active" onclick="addPlayer()" style="flex: 0 0 60px;">+</button>
-        </div>
-        
-        <div class="setup-buttons">
-            <button class="btn-quick" onclick="loadDefaultTeam('TEAM CANON')">⚡ TEAM CANON</button>
-            <button class="btn-quick" onclick="loadDuo('Luca', 'Loick')">👥 Luca vs Loick</button>
+        <div id="setup-jouer">
+            <h3>Mode de Jeu</h3>
+            <div class="mode-selector">
+                <button class="btn btn-active" onclick="setMode(301)">301</button>
+                <button class="btn" onclick="setMode(501)">501</button>
+            </div>
+
+            <h3>Joueurs</h3>
+            <div class="input-group">
+                <input type="text" id="player-input" placeholder="Nom du joueur">
+                <button class="btn btn-active" onclick="addPlayer()" style="flex: 0 0 60px;">+</button>
+            </div>
+            
+            <div class="setup-buttons">
+                <button class="btn-quick" onclick="loadDuo('TEAM CANON', 'Adversaires')">⚡ TEAM CANON</button>
+                <button class="btn-quick" onclick="loadDuo('Luca', 'Loick')">👥 Luca vs Loick</button>
+            </div>
+
+            <div id="players-list" style="margin: 15px 0;"></div>
+            <button class="btn-primary" onclick="startGame()">JOUER 🎯</button>
         </div>
 
-        <div id="players-list" style="margin: 15px 0;"></div>
-
-        <button class="btn btn-primary" onclick="startGame()">Lancer la partie 🎯</button>
+        <div id="setup-historique" class="hidden">
+            <div id="history-list"></div>
+            <button class="btn-quick" onclick="clearHistory()" style="margin-top: 15px; color: #f44336; border-color: #f44336;">Vider l'historique</button>
+        </div>
     </div>
 
+    <!-- ÉCRAN DE JEU -->
     <div id="game-screen" class="card hidden">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h2 id="game-title" style="margin: 0;">501</h2>
-            <button class="btn-quick" onclick="resetGame()" style="padding: 5px 10px;">Quitter</button>
+        <div class="header-game">
+            <h2 id="game-title" style="margin: 0; color: #4caf50;">501</h2>
+            <button class="btn-quick" onclick="resetGame()" style="width: auto;">Quitter</button>
         </div>
 
         <div id="scoreboard" class="scoreboard"></div>
 
-        <div class="display-area" id="score-display">0</div>
-
-        <div class="quick-scores">
-            <button class="btn-quick" onclick="quickInput(0)">D0 (Miss)</button>
-            <button class="btn-quick" onclick="quickInput(26)">26</button>
-            <button class="btn-quick" onclick="quickInput(41)">41</button>
-            <button class="btn-quick" onclick="quickInput(60)">60</button>
-            <button class="btn-quick" onclick="quickInput(85)">85</button>
-            <button class="btn-quick" onclick="quickInput(100)">100</button>
-            <button class="btn-quick" onclick="quickInput(140)">140</button>
-            <button class="btn-quick" onclick="quickInput(180)">180</button>
+        <div class="turn-container">
+            <div class="dart-boxes">
+                <div class="dart-box" id="dart-0"></div>
+                <div class="dart-box" id="dart-1"></div>
+                <div class="dart-box" id="dart-2"></div>
+            </div>
+            <div class="turn-total" id="turn-total">Volée en cours : 0</div>
         </div>
 
-        <div class="keypad-grid">
-            <button class="key" onclick="pressKey('1')">1</button>
-            <button class="key" onclick="pressKey('2')">2</button>
-            <button class="key" onclick="pressKey('3')">3</button>
-            <button class="key" onclick="pressKey('4')">4</button>
-            <button class="key" onclick="pressKey('5')">5</button>
-            <button class="key" onclick="pressKey('6')">6</button>
-            <button class="key" onclick="pressKey('7')">7</button>
-            <button class="key" onclick="pressKey('8')">8</button>
-            <button class="key" onclick="pressKey('9')">9</button>
-            <button class="key" style="color: #ff5722;" onclick="pressKey('CLR')">⌫</button>
-            <button class="key" onclick="pressKey('0')">0</button>
-            <button class="key" style="background: #00adb5; color: #121214;" onclick="pressKey('ENT')">OK</button>
+        <div class="multipliers">
+            <button class="btn-mult active" id="btn-mult-1" onclick="setMultiplier(1)">x1</button>
+            <button class="btn-mult" id="btn-mult-2" onclick="setMultiplier(2)">Double</button>
+            <button class="btn-mult" id="btn-mult-3" onclick="setMultiplier(3)">Triple</button>
+        </div>
+
+        <div class="numpad">
+            <button class="key" onclick="pressNumber(1)">1</button>
+            <button class="key" onclick="pressNumber(2)">2</button>
+            <button class="key" onclick="pressNumber(3)">3</button>
+            <button class="key" onclick="pressNumber(4)">4</button>
+            
+            <button class="key" onclick="pressNumber(5)">5</button>
+            <button class="key" onclick="pressNumber(6)">6</button>
+            <button class="key" onclick="pressNumber(7)">7</button>
+            <button class="key" onclick="pressNumber(8)">8</button>
+            
+            <button class="key" onclick="pressNumber(9)">9</button>
+            <button class="key" onclick="pressNumber(10)">10</button>
+            <button class="key" onclick="pressNumber(11)">11</button>
+            <button class="key" onclick="pressNumber(12)">12</button>
+            
+            <button class="key" onclick="pressNumber(13)">13</button>
+            <button class="key" onclick="pressNumber(14)">14</button>
+            <button class="key" onclick="pressNumber(15)">15</button>
+            <button class="key" onclick="pressNumber(16)">16</button>
+            
+            <button class="key" onclick="pressNumber(17)">17</button>
+            <button class="key" onclick="pressNumber(18)">18</button>
+            <button class="key" onclick="pressNumber(19)">19</button>
+            <button class="key" onclick="pressNumber(20)">20</button>
+            
+            <button class="key bull" onclick="pressNumber(25)">BULL</button>
+            <button class="key miss" onclick="pressNumber(0)">0</button>
+            <button class="key undo" onclick="undoTurn()">⌫</button>
+            <button class="key ok" onclick="confirmTurn()">OK</button>
         </div>
     </div>
 </div>
@@ -117,11 +166,28 @@
     let currentMode = 301;
     let players = [];
     let activePlayerIndex = 0;
-    let currentInput = "";
+    
+    let currentDarts = []; 
+    let currentMultiplier = 1;
+    let historyStack = []; 
 
-    // Enregistre automatiquement l'application pour le mode hors connexion
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
+    }
+
+    function switchTab(tab) {
+        if(tab === 'jouer') {
+            document.getElementById('setup-jouer').classList.remove('hidden');
+            document.getElementById('setup-historique').classList.add('hidden');
+            document.getElementById('tab-btn-jouer').classList.add('active');
+            document.getElementById('tab-btn-historique').classList.remove('active');
+        } else {
+            document.getElementById('setup-jouer').classList.add('hidden');
+            document.getElementById('setup-historique').classList.remove('hidden');
+            document.getElementById('tab-btn-jouer').classList.remove('active');
+            document.getElementById('tab-btn-historique').classList.add('active');
+            loadHistory();
+        }
     }
 
     function setMode(mode) {
@@ -148,7 +214,7 @@
         const input = document.getElementById('player-input');
         const name = input.value.trim();
         if (name) {
-            players.push({ name: name, score: currentMode, lastTurn: "-" });
+            players.push({ name: name, score: currentMode, lastTurn: "En attente" });
             input.value = "";
             renderSetupPlayers();
         }
@@ -159,30 +225,28 @@
         renderSetupPlayers();
     }
 
-    function loadDefaultTeam(teamName) {
-        players = [{ name: teamName, score: currentMode, lastTurn: "-" }, { name: "Adversaires", score: currentMode, lastTurn: "-" }];
-        renderSetupPlayers();
-    }
-
     function loadDuo(p1, p2) {
         players = [
-            { name: p1, score: currentMode, lastTurn: "-" },
-            { name: p2, score: currentMode, lastTurn: "-" }
+            { name: p1, score: currentMode, lastTurn: "En attente" },
+            { name: p2, score: currentMode, lastTurn: "En attente" }
         ];
         renderSetupPlayers();
     }
 
     function startGame() {
-        if (players.length < 1) {
-            alert("Ajoute au moins un joueur ou une équipe !");
-            return;
-        }
+        if (players.length < 1) return alert("Ajoute au moins un joueur !");
         players.forEach(p => p.score = currentMode);
         activePlayerIndex = 0;
-        document.getElementById('game-title').innerText = currentMode;
+        historyStack = [];
+        currentDarts = [];
+        setMultiplier(1);
+        
+        document.getElementById('game-title').innerText = "Mode " + currentMode;
         document.getElementById('setup-screen').classList.add('hidden');
         document.getElementById('game-screen').classList.remove('hidden');
+        
         updateScoreboard();
+        updateTurnUI();
     }
 
     function updateScoreboard() {
@@ -192,9 +256,9 @@
             const isActive = index === activePlayerIndex ? 'active' : '';
             container.innerHTML += `
                 <div class="player-row ${isActive}">
-                    <div class="player-info">
-                        <span class="player-name">${p.name}</span>
-                        <span class="player-last-turn">Volée précédente : ${p.lastTurn}</span>
+                    <div>
+                        <div class="player-name">${p.name}</div>
+                        <div class="player-last-turn">${p.lastTurn}</div>
                     </div>
                     <div class="player-score">${p.score}</div>
                 </div>
@@ -202,50 +266,145 @@
         });
     }
 
-    function pressKey(key) {
-        const display = document.getElementById('score-display');
-        if (key === 'CLR') {
-            currentInput = currentInput.slice(0, -1);
-        } else if (key === 'ENT') {
-            submitScore(parseInt(currentInput) || 0);
-            currentInput = "";
-        } else {
-            if (currentInput.length < 3) currentInput += key;
-        }
-        display.innerText = currentInput || "0";
+    function setMultiplier(val) {
+        currentMultiplier = val;
+        document.querySelectorAll('.btn-mult').forEach(b => b.classList.remove('active'));
+        document.getElementById(`btn-mult-${val}`).classList.add('active');
     }
 
-    function quickInput(val) {
-        submitScore(val);
-        currentInput = "";
-        document.getElementById('score-display').innerText = "0";
-    }
+    function pressNumber(num) {
+        if(currentDarts.length >= 3) return; 
 
-    function submitScore(points) {
-        if (points > 180) {
-            alert("Impossible de marquer plus de 180 points en une volée !");
-            return;
-        }
+        if(num === 25 && currentMultiplier === 3) currentMultiplier = 1;
+        if(num === 0) currentMultiplier = 1; 
 
-        let player = players[activePlayerIndex];
+        let score = num * currentMultiplier;
+        let text = num.toString();
         
-        if (player.score - points === 0) {
-            player.score = 0;
-            player.lastTurn = points;
+        if(num === 0) text = "Miss";
+        else if(num === 25) text = currentMultiplier === 2 ? "D-Bull" : "Bull";
+        else {
+            if(currentMultiplier === 2) text = "D" + num;
+            if(currentMultiplier === 3) text = "T" + num;
+        }
+
+        currentDarts.push({ score, text });
+        setMultiplier(1); 
+        updateTurnUI();
+    }
+
+    function updateTurnUI() {
+        let turnTotal = 0;
+        for(let i=0; i<3; i++) {
+            let box = document.getElementById(`dart-${i}`);
+            if(i < currentDarts.length) {
+                box.innerText = currentDarts[i].text;
+                box.classList.add('filled');
+                turnTotal += currentDarts[i].score;
+            } else {
+                box.innerText = "";
+                box.classList.remove('filled');
+            }
+        }
+        document.getElementById('turn-total').innerText = `Volée en cours : ${turnTotal}`;
+    }
+
+    function undoTurn() {
+        if(currentDarts.length > 0) {
+            currentDarts.pop();
+            setMultiplier(1);
+            updateTurnUI();
+        } else if(historyStack.length > 0) {
+            let lastState = historyStack.pop();
+            players = JSON.parse(JSON.stringify(lastState.players));
+            activePlayerIndex = lastState.activePlayerIndex;
+            currentDarts = [];
+            setMultiplier(1);
             updateScoreboard();
-            alert(`🎉 Victoire de ${player.name} !`);
+            updateTurnUI();
+        }
+    }
+
+    function confirmTurn() {
+        if(currentDarts.length === 0) return; 
+
+        historyStack.push({
+            players: JSON.parse(JSON.stringify(players)),
+            activePlayerIndex: activePlayerIndex
+        });
+
+        let turnScore = currentDarts.reduce((acc, d) => acc + d.score, 0);
+        let player = players[activePlayerIndex];
+
+        if(player.score - turnScore === 0) {
+            player.score = 0;
+            player.lastTurn = currentDarts.map(d => d.text).join(' / ') + ` (${turnScore})`;
+            updateScoreboard();
+            saveGameToHistory();
+            alert(`🎉 VICTOIRE DE ${player.name.toUpperCase()} !`);
             resetGame();
             return;
-        } else if (player.score - points < 0) {
-            // Règle du "Bust" (on dépasse, le score ne bouge pas)
-            player.lastTurn = "Bust (0)";
+        } else if (player.score - turnScore < 0) {
+            player.lastTurn = "Bust ! (Dépassement)";
         } else {
-            player.score -= points;
-            player.lastTurn = points;
+            player.score -= turnScore;
+            player.lastTurn = currentDarts.map(d => d.text).join(' / ') + ` (${turnScore})`;
         }
 
+        currentDarts = [];
         activePlayerIndex = (activePlayerIndex + 1) % players.length;
+        setMultiplier(1);
         updateScoreboard();
+        updateTurnUI();
+    }
+
+    function saveGameToHistory() {
+        let history = JSON.parse(localStorage.getItem('dartsHistory') || '[]');
+        let winner = players.find(p => p.score === 0);
+        let gameRecord = {
+            date: new Date().toLocaleString('fr-FR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit'}),
+            mode: currentMode,
+            players: players.map(p => ({ name: p.name, score: p.score })),
+            winner: winner ? winner.name : "Inconnu"
+        };
+        history.unshift(gameRecord);
+        localStorage.setItem('dartsHistory', JSON.stringify(history));
+    }
+
+    function loadHistory() {
+        const list = document.getElementById('history-list');
+        let history = JSON.parse(localStorage.getItem('dartsHistory') || '[]');
+        
+        if(history.length === 0) {
+            list.innerHTML = "<p style='text-align:center; color:#a0aec0; margin-top:20px;'>Aucune partie enregistrée pour le moment.</p>";
+            return;
+        }
+
+        list.innerHTML = history.map(game => `
+            <div style="background: #1e1e24; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #2d2d35;">
+                <div style="display:flex; justify-content:space-between; margin-bottom: 10px; border-bottom: 1px solid #2d2d35; padding-bottom: 5px;">
+                    <strong style="color: #4caf50;">Mode ${game.mode}</strong>
+                    <span style="font-size: 12px; color: #a0aec0;">${game.date}</span>
+                </div>
+                <div style="font-size: 15px;">
+                    ${game.players.map(p => `
+                        <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+                            <span style="color: ${p.name === game.winner ? '#fff' : '#a0aec0'}; font-weight: ${p.name === game.winner ? 'bold' : 'normal'}">
+                                ${p.name} ${p.name === game.winner ? '🏆' : ''}
+                            </span>
+                            <span style="color: ${p.score === 0 ? '#4caf50' : '#e2e8f0'}">${p.score} restants</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function clearHistory() {
+        if(confirm("Veux-tu vraiment supprimer tout l'historique de tes parties ?")) {
+            localStorage.removeItem('dartsHistory');
+            loadHistory();
+        }
     }
 
     function resetGame() {
