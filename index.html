@@ -19,7 +19,6 @@
         .card { background: #131722; padding: 18px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); margin-bottom: 16px; border: 1px solid #1e2433; }
         .hidden { display: none !important; }
         
-        /* Modern App Tabs */
         .tab-container { display: flex; background: #1e2433; border-radius: 12px; padding: 4px; margin-bottom: 20px; overflow-x: auto; scrollbar-width: none;}
         .tab-btn { flex: 1; text-align: center; padding: 10px; cursor: pointer; color: #94a3b8; font-weight: 700; font-size: 13px; border-radius: 8px; transition: all 0.2s; white-space: nowrap; }
         .tab-btn.active { color: #00e676; background: #131722; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
@@ -29,11 +28,10 @@
         input:focus, select:focus { border-color: #00e676; }
         
         .btn-add { background: #1e2433; color: #00e676; border: 1px solid #242c3d; width: 54px; font-size: 22px; font-weight: bold; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .btn-primary { background: #00e676; color: #0b0e14; width: 100%; padding: 16px; font-size: 16px; border-radius: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 230, 118, 0.2); margin-top: 10px; }
+        .btn-primary { background: #00e676; color: #0b0e14; width: 100%; padding: 16px; font-size: 16px; border-radius: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border: none; cursor: pointer; margin-top: 10px; }
         .btn-primary:active { transform: scale(0.98); }
         .btn-quick { padding: 8px 14px; font-size: 12px; background: #1e2433; border: 1px solid #242c3d; color: #94a3b8; border-radius: 8px; font-weight: 700; cursor: pointer; }
         
-        /* Lists & Checkboxes */
         .selection-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; max-height: 200px; overflow-y: auto; }
         .checkbox-card { display: flex; align-items: center; background: #1c2130; padding: 12px; border-radius: 10px; border: 1px solid #242c3d; cursor: pointer; }
         .checkbox-card input[type="checkbox"] { flex: 0 0 20px; height: 20px; width: 20px; accent-color: #00e676; margin-right: 12px; }
@@ -51,83 +49,66 @@
         .global-stat-val { font-size: 16px; font-weight: 800; color: #00e676; }
         .global-stat-label { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; }
         
-        /* Game Screen Scoreboard */
         .scoreboard { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
         .player-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 14px 18px; background: #171d2c; border-radius: 14px; border: 2px solid transparent; transition: all 0.2s; }
         .player-row.active { border-color: #00e676; background: rgba(0, 230, 118, 0.04); box-shadow: 0 0 15px rgba(0, 230, 118, 0.10); }
-        .team-title { font-size: 16px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 6px; }
-        .player-score { font-size: 34px; font-weight: 900; color: #cbd5e1; font-variant-numeric: tabular-nums; line-height: 1; }
+        .team-title { font-size: 16px; font-weight: 800; color: #fff; text-transform: uppercase; margin-bottom: 6px; }
+        .player-score { font-size: 34px; font-weight: 900; color: #cbd5e1; line-height: 1; }
         .player-row.active .player-score { color: #00e676; font-size: 38px; }
         
-        .stat-line { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 10.5px; color: #94a3b8; margin-top: 2px; }
+        .stat-line { font-family: ui-monospace, monospace; font-size: 10.5px; color: #94a3b8; margin-top: 2px; }
         .stat-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
 
-        /* Darts Tracker & Numpad */
         .header-game { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
         .turn-container { background: #171d2c; padding: 12px; border-radius: 14px; margin-bottom: 14px; border: 1px solid #242c3d; }
         .dart-boxes { display: flex; justify-content: center; gap: 12px; margin-bottom: 8px; }
         .dart-box { width: 64px; height: 46px; background: #0b0e14; border: 2px solid #242c3d; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #fff; }
         .dart-box.filled { border-color: #00e676; color: #00e676; background: rgba(0, 230, 118, 0.02); }
-        .turn-total { text-align: center; font-size: 13px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .turn-total { text-align: center; font-size: 13px; color: #94a3b8; font-weight: 700; text-transform: uppercase; }
 
         .multipliers { display: flex; background: #1e2433; border-radius: 10px; padding: 3px; margin-bottom: 12px; gap: 2px; }
-        .btn-mult { flex: 1; padding: 12px; background: transparent; color: #94a3b8; border: none; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; transition: all 0.15s; text-transform: uppercase; }
-        .btn-mult.active { background: #00b0ff; color: #fff; box-shadow: 0 4px 10px rgba(0, 176, 255, 0.2); }
-        #btn-mult-2.active { background: #ff9100; color: #fff; box-shadow: 0 4px 10px rgba(255, 145, 0, 0.2); }
-        #btn-mult-3.active { background: #ff3d00; color: #fff; box-shadow: 0 4px 10px rgba(255, 61, 0, 0.2); }
+        .btn-mult { flex: 1; padding: 12px; background: transparent; color: #94a3b8; border: none; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase; }
+        .btn-mult.active { background: #00b0ff; color: #fff; }
+        #btn-mult-2.active { background: #ff9100; color: #fff; }
+        #btn-mult-3.active { background: #ff3d00; color: #fff; }
 
         .numpad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .key { background: #1e2433; color: #fff; font-size: 18px; font-weight: 700; border: none; border-radius: 10px; height: 52px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.1s, transform 0.05s; }
+        .key { background: #1e2433; color: #fff; font-size: 18px; font-weight: 700; border: none; border-radius: 10px; height: 52px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .key:active { background: #2b354a; transform: scale(0.96); }
         .key.bull { background: #00c853; color: #fff; font-weight: 800; }
         .key.miss { background: #374151; color: #9ca3af; }
         .key.undo { background: #ff9100; color: #0b0e14; font-size: 20px; }
         .key.ok { background: #00e676; color: #0b0e14; font-size: 18px; font-weight: 800; }
         
-        /* Ranked Medals */
         .medal { font-size: 26px; width: 45px; text-align: center; }
         .ranked-row { display: flex; align-items: center; }
 
-        /* --- VICTORY MODAL ANIMATIONS --- */
         #victory-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(11, 14, 20, 0.90);
             display: flex; align-items: center; justify-content: center;
-            z-index: 1000;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000; backdrop-filter: blur(8px);
         }
         .victory-content {
             background: #131722; padding: 40px 20px; border-radius: 24px;
-            text-align: center; border: 2px solid #00e676;
-            box-shadow: 0 0 40px rgba(0, 230, 118, 0.3);
-            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            max-width: 90%;
-            width: 350px;
+            text-align: center; border: 2px solid #00e676; box-shadow: 0 0 40px rgba(0, 230, 118, 0.3);
+            animation: popIn 0.6s forwards; max-width: 90%; width: 350px;
         }
         .victory-icon { font-size: 70px; margin-bottom: 15px; animation: bounce 2s infinite; }
-        .victory-title { color: #00e676; font-size: 30px; margin-bottom: 5px; text-transform: uppercase; font-weight: 900; text-shadow: 0 0 10px rgba(0, 230, 118, 0.5); }
+        .victory-title { color: #00e676; font-size: 30px; margin-bottom: 5px; text-transform: uppercase; font-weight: 900; }
         .victory-sub { color: #f1f5f9; font-size: 16px; margin-bottom: 30px; font-weight: 600; }
 
-        @keyframes popIn {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-20px); }
-            60% { transform: translateY(-10px); }
-        }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-20px); } 60% { transform: translateY(-10px); } }
     </style>
 </head>
 <body>
 
-<!-- MODAL DE VICTOIRE -->
 <div id="victory-modal" class="hidden">
     <div class="victory-content">
         <div class="victory-icon">🏆</div>
-        <h2 id="victory-team" class="victory-title">TEAM NAME</h2>
-        <p id="victory-player" class="victory-sub">Félicitations au joueur !</p>
+        <h2 id="victory-team" class="victory-title">TEAM</h2>
+        <p id="victory-player" class="victory-sub">Félicitations !</p>
         <button class="btn-primary" onclick="closeVictoryModal()">CONTINUER</button>
     </div>
 </div>
@@ -142,7 +123,6 @@
             <div id="tab-btn-historique" class="tab-btn" onclick="switchTab('historique')">Hist.</div>
         </div>
 
-        <!-- ONGLET JOUER -->
         <div id="setup-jouer">
             <h3>Mode de Jeu</h3>
             <div class="input-group">
@@ -152,24 +132,13 @@
                     <option value="701">701</option>
                 </select>
             </div>
-
-            <h3>Joueurs Solo</h3>
-            <div id="play-players-list" class="selection-list"></div>
-
-            <h3>Équipes</h3>
-            <div id="play-teams-list" class="selection-list"></div>
-
+            <h3>Joueurs Solo</h3><div id="play-players-list" class="selection-list"></div>
+            <h3>Équipes</h3><div id="play-teams-list" class="selection-list"></div>
             <h3>Ordre de Départ</h3>
-            <div class="input-group">
-                <select id="starting-team-select">
-                    <option value="random">🎲 Aléatoire</option>
-                </select>
-            </div>
-
+            <div class="input-group"><select id="starting-team-select"><option value="random">🎲 Aléatoire</option></select></div>
             <button class="btn-primary" onclick="startGame()">Lancer le match 🎯</button>
         </div>
 
-        <!-- ONGLET JOUEURS (BASE DE DONNÉES) -->
         <div id="setup-joueurs" class="hidden">
             <div class="input-group">
                 <input type="text" id="new-player-input" placeholder="Nouveau joueur (ex: Luca)">
@@ -179,20 +148,13 @@
             <div id="db-players-list"></div>
         </div>
 
-        <!-- ONGLET ÉQUIPES -->
         <div id="setup-equipes" class="hidden">
-            <div class="input-group">
-                <input type="text" id="new-team-input" placeholder="Nom de l'équipe (ex: Team Canon)">
-            </div>
-            <h3>Sélectionner les membres</h3>
-            <div id="team-creation-players-list" class="selection-list"></div>
+            <div class="input-group"><input type="text" id="new-team-input" placeholder="Nom de l'équipe"></div>
+            <h3>Sélectionner les membres</h3><div id="team-creation-players-list" class="selection-list"></div>
             <button class="btn-primary" onclick="createTeam()" style="background: #00b0ff; color: #fff;">Créer l'équipe</button>
-
-            <h3 style="margin-top: 20px;">Équipes existantes</h3>
-            <div id="db-teams-list"></div>
+            <h3 style="margin-top: 20px;">Équipes existantes</h3><div id="db-teams-list"></div>
         </div>
 
-        <!-- ONGLET RANKED -->
         <div id="setup-ranked" class="hidden">
             <div class="input-group" style="margin-bottom: 20px;">
                 <select id="ranked-type-select" onchange="renderRanked()">
@@ -203,24 +165,17 @@
             <div id="ranked-list"></div>
         </div>
 
-        <!-- ONGLET HISTORIQUE -->
         <div id="setup-historique" class="hidden">
             <div id="history-list"></div>
             <button class="btn-quick" onclick="clearHistory()" style="margin-top: 15px; color: #ff3d00; border-color: #ff3d00; width: 100%; padding: 12px;">Vider l'historique complet</button>
         </div>
     </div>
 
-    <!-- ÉCRAN DE JEU -->
     <div id="game-screen" class="card hidden">
-        <div class="header-game">
-            <h2 id="game-title">MODE 501</h2>
-            <button class="btn-quick" onclick="abortGame()">Quitter</button>
-        </div>
+        <div class="header-game"><h2 id="game-title">MODE 501</h2><button class="btn-quick" onclick="abortGame()">Quitter</button></div>
         <div id="scoreboard" class="scoreboard"></div>
         <div class="turn-container">
-            <div class="dart-boxes">
-                <div class="dart-box" id="dart-0"></div><div class="dart-box" id="dart-1"></div><div class="dart-box" id="dart-2"></div>
-            </div>
+            <div class="dart-boxes"><div class="dart-box" id="dart-0"></div><div class="dart-box" id="dart-1"></div><div class="dart-box" id="dart-2"></div></div>
             <div class="turn-total" id="turn-total">VOLÉE : 0</div>
         </div>
         <div class="multipliers">
@@ -240,13 +195,17 @@
 </div>
 
 <script>
+    // DÉTECTEUR DE CRASH GLOBAL
+    window.onerror = function(msg, url, line) {
+        alert("Erreur détectée : " + msg + " (Ligne " + line + "). Vide le cache du navigateur.");
+        return true; 
+    };
+
     let currentMode = 501;
     let dbPlayers = [];
     let dbTeams = [];
-    
     let activeParticipants = []; 
     let activeParticipantIndex = 0;
-    
     let currentDarts = [];
     let currentMultiplier = 1;
     let historyStack = [];
@@ -260,49 +219,50 @@
 
     function switchTab(tab) {
         ['jouer', 'joueurs', 'equipes', 'ranked', 'historique'].forEach(t => {
-            document.getElementById(`setup-${t}`).classList.add('hidden');
-            document.getElementById(`tab-btn-${t}`).classList.remove('active');
+            let elSetup = document.getElementById(`setup-${t}`);
+            let elBtn = document.getElementById(`tab-btn-${t}`);
+            if(elSetup) elSetup.classList.add('hidden');
+            if(elBtn) elBtn.classList.remove('active');
         });
-        document.getElementById(`setup-${tab}`).classList.remove('hidden');
-        document.getElementById(`tab-btn-${tab}`).classList.add('active');
+        
+        let targetSetup = document.getElementById(`setup-${tab}`);
+        let targetBtn = document.getElementById(`tab-btn-${tab}`);
+        if(targetSetup) targetSetup.classList.remove('hidden');
+        if(targetBtn) targetBtn.classList.add('active');
+        
         renderAllViews();
-    }
-
-    /* --- GESTION BASE DE DONNÉES --- */
-    function loadDatabase() {
-        dbPlayers = JSON.parse(localStorage.getItem('v5_players') || '[]');
-        dbTeams = JSON.parse(localStorage.getItem('v5_teams') || '[]');
-        
-        // SÉCURITÉ ANTI-CRASH : Ajoute des stats vides aux anciens joueurs
-        dbPlayers.forEach(p => {
-            if (!p.globalStats) {
-                p.globalStats = { dartsThrown: 0, doubles: 0, triples: 0, scoreTotal: 0, turnsPlayed: 0, bestTurn: 0, gamesPlayed: 0, wins: 0 };
-            }
-        });
-        
-        // SÉCURITÉ ANTI-CRASH : Ajoute des stats vides aux anciennes équipes
-        dbTeams.forEach(t => {
-            if (!t.globalStats) {
-                t.globalStats = { gamesPlayed: 0, wins: 0 };
-            }
-        });
-    }
-
-    
-    function saveDatabase() {
-        localStorage.setItem('v5_players', JSON.stringify(dbPlayers));
-        localStorage.setItem('v5_teams', JSON.stringify(dbTeams));
     }
 
     function createEmptyGlobalStats() {
         return { dartsThrown: 0, doubles: 0, triples: 0, scoreTotal: 0, turnsPlayed: 0, bestTurn: 0, gamesPlayed: 0, wins: 0 };
     }
 
+    function loadDatabase() {
+        // SÉCURITÉ : Lecture protégée de la base de données
+        try { dbPlayers = JSON.parse(localStorage.getItem('v5_players')); } catch(e) { dbPlayers = []; }
+        try { dbTeams = JSON.parse(localStorage.getItem('v5_teams')); } catch(e) { dbTeams = []; }
+        
+        if (!Array.isArray(dbPlayers)) dbPlayers = [];
+        if (!Array.isArray(dbTeams)) dbTeams = [];
+        
+        // SÉCURITÉ : Réparation automatique des profils corrompus
+        dbPlayers.forEach(p => {
+            if (!p.globalStats) p.globalStats = createEmptyGlobalStats();
+        });
+        dbTeams.forEach(t => {
+            if (!t.globalStats) t.globalStats = { gamesPlayed: 0, wins: 0 };
+        });
+    }
+    
+    function saveDatabase() {
+        localStorage.setItem('v5_players', JSON.stringify(dbPlayers));
+        localStorage.setItem('v5_teams', JSON.stringify(dbTeams));
+    }
+
     function createPlayer() {
         const name = document.getElementById('new-player-input').value.trim();
         if (!name) return;
         if (dbPlayers.find(p => p.name.toLowerCase() === name.toLowerCase())) return alert("Ce joueur existe déjà !");
-        
         dbPlayers.push({ id: 'p_' + Date.now(), name: name, globalStats: createEmptyGlobalStats() });
         saveDatabase();
         document.getElementById('new-player-input').value = "";
@@ -310,12 +270,9 @@
     }
 
     function deletePlayer(id) {
-        if (!confirm("Supprimer ce joueur et TOUTES ses statistiques à vie ?")) return;
+        if (!confirm("Supprimer ce joueur et ses stats à vie ?")) return;
         dbPlayers = dbPlayers.filter(p => p.id !== id);
-        dbTeams = dbTeams.map(t => {
-            t.playerIds = t.playerIds.filter(pid => pid !== id);
-            return t;
-        }).filter(t => t.playerIds.length > 0);
+        dbTeams = dbTeams.map(t => { t.playerIds = t.playerIds.filter(pid => pid !== id); return t; }).filter(t => t.playerIds.length > 0);
         saveDatabase();
         renderAllViews();
     }
@@ -325,7 +282,6 @@
         const selectedIds = Array.from(document.querySelectorAll('#team-creation-players-list input:checked')).map(cb => cb.value);
         if (!name) return alert("Nommez l'équipe !");
         if (selectedIds.length === 0) return alert("Cochez au moins un joueur !");
-        
         dbTeams.push({ id: 't_' + Date.now(), name: name, playerIds: selectedIds, globalStats: { gamesPlayed: 0, wins: 0 } });
         saveDatabase();
         document.getElementById('new-team-input').value = "";
@@ -333,15 +289,12 @@
     }
 
     function deleteTeam(id) {
-        if (confirm("Supprimer l'équipe ? (Les joueurs et leurs stats seront conservés)")) {
-            dbTeams = dbTeams.filter(t => t.id !== id);
-            saveDatabase();
-            renderAllViews();
-        }
+        if (confirm("Supprimer l'équipe ?")) { dbTeams = dbTeams.filter(t => t.id !== id); saveDatabase(); renderAllViews(); }
     }
 
-    /* --- RENDU DES VUES --- */
     function calcGlobalDerivedStats(stats) {
+        // SÉCURITÉ : Vérifie si stats existe
+        if (!stats) return { avg: "0.0", d: "0", t: "0" };
         if (stats.dartsThrown === 0) return { avg: "0.0", d: "0", t: "0" };
         return {
             avg: (stats.scoreTotal / stats.turnsPlayed).toFixed(1),
@@ -351,70 +304,44 @@
     }
 
     function renderAllViews() {
-        const dbPlayersContainer = document.getElementById('db-players-list');
-        if (dbPlayers.length === 0) dbPlayersContainer.innerHTML = "<p style='color:#64748b; font-size:13px; text-align:center;'>Aucun joueur. Créez-en un au-dessus !</p>";
-        else dbPlayersContainer.innerHTML = dbPlayers.map(p => {
-            let s = calcGlobalDerivedStats(p.globalStats);
-            return `
-            <div class="data-card">
-                <div class="data-card-header">
-                    <div class="data-title">${p.name}</div>
-                    <button class="remove-btn" onclick="deletePlayer('${p.id}')">✕</button>
-                </div>
-                <div class="global-stats-grid">
-                    <div class="global-stat-box"><div class="global-stat-val">${s.avg}</div><div class="global-stat-label">Moyenne</div></div>
-                    <div class="global-stat-box"><div class="global-stat-val">${p.globalStats.bestTurn}</div><div class="global-stat-label">Max Volée</div></div>
-                    <div class="global-stat-box"><div class="global-stat-val" style="color:#ff9100;">${s.d}%</div><div class="global-stat-label">Doubles</div></div>
-                    <div class="global-stat-box"><div class="global-stat-val" style="color:#ff3d00;">${s.t}%</div><div class="global-stat-label">Triples</div></div>
-                    <div class="global-stat-box"><div class="global-stat-val" style="color:#cbd5e1;">${p.globalStats.gamesPlayed}</div><div class="global-stat-label">Parties</div></div>
-                    <div class="global-stat-box"><div class="global-stat-val" style="color:#cbd5e1;">${p.globalStats.wins}</div><div class="global-stat-label">Victoires</div></div>
-                </div>
-            </div>`;
-        }).join('');
+        try {
+            const dbPlayersContainer = document.getElementById('db-players-list');
+            if(dbPlayersContainer) {
+                if (dbPlayers.length === 0) dbPlayersContainer.innerHTML = "<p style='color:#64748b; font-size:13px; text-align:center;'>Aucun joueur.</p>";
+                else dbPlayersContainer.innerHTML = dbPlayers.map(p => {
+                    let s = calcGlobalDerivedStats(p.globalStats);
+                    return `<div class="data-card"><div class="data-card-header"><div class="data-title">${p.name}</div><button class="remove-btn" onclick="deletePlayer('${p.id}')">✕</button></div><div class="global-stats-grid"><div class="global-stat-box"><div class="global-stat-val">${s.avg}</div><div class="global-stat-label">Moyenne</div></div><div class="global-stat-box"><div class="global-stat-val">${p.globalStats.bestTurn}</div><div class="global-stat-label">Max Volée</div></div><div class="global-stat-box"><div class="global-stat-val" style="color:#ff9100;">${s.d}%</div><div class="global-stat-label">Doubles</div></div><div class="global-stat-box"><div class="global-stat-val" style="color:#ff3d00;">${s.t}%</div><div class="global-stat-label">Triples</div></div><div class="global-stat-box"><div class="global-stat-val" style="color:#cbd5e1;">${p.globalStats.gamesPlayed}</div><div class="global-stat-label">Parties</div></div><div class="global-stat-box"><div class="global-stat-val" style="color:#cbd5e1;">${p.globalStats.wins}</div><div class="global-stat-label">Victoires</div></div></div></div>`;
+                }).join('');
+            }
 
-        document.getElementById('team-creation-players-list').innerHTML = dbPlayers.map(p => `
-            <label class="checkbox-card">
-                <input type="checkbox" value="${p.id}">
-                <div class="checkbox-card-info"><div class="checkbox-card-title">${p.name}</div></div>
-            </label>
-        `).join('');
+            let tcpl = document.getElementById('team-creation-players-list');
+            if(tcpl) tcpl.innerHTML = dbPlayers.map(p => `<label class="checkbox-card"><input type="checkbox" value="${p.id}"><div class="checkbox-card-info"><div class="checkbox-card-title">${p.name}</div></div></label>`).join('');
 
-        const dbTeamsContainer = document.getElementById('db-teams-list');
-        if (dbTeams.length === 0) dbTeamsContainer.innerHTML = "<p style='color:#64748b; font-size:13px; text-align:center;'>Aucune équipe.</p>";
-        else dbTeamsContainer.innerHTML = dbTeams.map(t => {
-            let pNames = t.playerIds.map(pid => dbPlayers.find(p=>p.id===pid)?.name || 'Inconnu').join(', ');
-            return `
-            <div class="data-card">
-                <div class="data-card-header">
-                    <div>
-                        <div class="data-title">${t.name}</div>
-                        <div style="font-size:12px; color:#94a3b8; margin-top:2px;">${pNames}</div>
-                    </div>
-                    <button class="remove-btn" onclick="deleteTeam('${t.id}')">✕</button>
-                </div>
-            </div>`;
-        }).join('');
+            const dbTeamsContainer = document.getElementById('db-teams-list');
+            if(dbTeamsContainer) {
+                if (dbTeams.length === 0) dbTeamsContainer.innerHTML = "<p style='color:#64748b; font-size:13px; text-align:center;'>Aucune équipe.</p>";
+                else dbTeamsContainer.innerHTML = dbTeams.map(t => {
+                    let pNames = t.playerIds.map(pid => dbPlayers.find(p=>p.id===pid)?.name || 'Inconnu').join(', ');
+                    return `<div class="data-card"><div class="data-card-header"><div><div class="data-title">${t.name}</div><div style="font-size:12px; color:#94a3b8; margin-top:2px;">${pNames}</div></div><button class="remove-btn" onclick="deleteTeam('${t.id}')">✕</button></div></div>`;
+                }).join('');
+            }
 
-        document.getElementById('play-players-list').innerHTML = dbPlayers.map(p => `
-            <label class="checkbox-card">
-                <input type="checkbox" value="${p.id}" class="match-participant" data-type="solo" onchange="updateStartOrder()">
-                <div class="checkbox-card-info"><div class="checkbox-card-title">${p.name}</div></div>
-            </label>
-        `).join('');
-        
-        document.getElementById('play-teams-list').innerHTML = dbTeams.map(t => `
-            <label class="checkbox-card">
-                <input type="checkbox" value="${t.id}" class="match-participant" data-type="team" onchange="updateStartOrder()">
-                <div class="checkbox-card-info">
-                    <div class="checkbox-card-title">${t.name}</div>
-                    <div class="checkbox-card-sub">${t.playerIds.map(pid => dbPlayers.find(p=>p.id===pid)?.name).join(', ')}</div>
-                </div>
-            </label>
-        `).join('');
-        updateStartOrder();
-        
-        if(!document.getElementById('setup-ranked').classList.contains('hidden')) renderRanked();
-        if(!document.getElementById('setup-historique').classList.contains('hidden')) loadHistory();
+            let ppl = document.getElementById('play-players-list');
+            if(ppl) ppl.innerHTML = dbPlayers.map(p => `<label class="checkbox-card"><input type="checkbox" value="${p.id}" class="match-participant" data-type="solo" onchange="updateStartOrder()"><div class="checkbox-card-info"><div class="checkbox-card-title">${p.name}</div></div></label>`).join('');
+            
+            let ptl = document.getElementById('play-teams-list');
+            if(ptl) ptl.innerHTML = dbTeams.map(t => `<label class="checkbox-card"><input type="checkbox" value="${t.id}" class="match-participant" data-type="team" onchange="updateStartOrder()"><div class="checkbox-card-info"><div class="checkbox-card-title">${t.name}</div><div class="checkbox-card-sub">${t.playerIds.map(pid => dbPlayers.find(p=>p.id===pid)?.name).join(', ')}</div></div></label>`).join('');
+            
+            updateStartOrder();
+            
+            let rankedSetup = document.getElementById('setup-ranked');
+            if(rankedSetup && !rankedSetup.classList.contains('hidden')) renderRanked();
+            
+            let histSetup = document.getElementById('setup-historique');
+            if(histSetup && !histSetup.classList.contains('hidden')) loadHistory();
+        } catch(err) {
+            console.error(err);
+        }
     }
 
     function renderRanked() {
@@ -423,90 +350,64 @@
         
         if (type === 'players') {
             let sortedPlayers = [...dbPlayers].sort((a, b) => {
-                let wA = a.globalStats.wins || 0;
-                let wB = b.globalStats.wins || 0;
+                let wA = a.globalStats ? a.globalStats.wins : 0;
+                let wB = b.globalStats ? b.globalStats.wins : 0;
                 if (wB !== wA) return wB - wA; 
                 
-                let gpA = a.globalStats.gamesPlayed || 0;
-                let gpB = b.globalStats.gamesPlayed || 0;
+                let gpA = a.globalStats ? a.globalStats.gamesPlayed : 0;
+                let gpB = b.globalStats ? b.globalStats.gamesPlayed : 0;
                 let rA = gpA ? wA / gpA : 0;
                 let rB = gpB ? wB / gpB : 0;
                 if (rB !== rA) return rB - rA; 
 
-                let avgA = a.globalStats.turnsPlayed ? a.globalStats.scoreTotal / a.globalStats.turnsPlayed : 0;
-                let avgB = b.globalStats.turnsPlayed ? b.globalStats.scoreTotal / b.globalStats.turnsPlayed : 0;
+                let avgA = (a.globalStats && a.globalStats.turnsPlayed) ? a.globalStats.scoreTotal / a.globalStats.turnsPlayed : 0;
+                let avgB = (b.globalStats && b.globalStats.turnsPlayed) ? b.globalStats.scoreTotal / b.globalStats.turnsPlayed : 0;
                 return avgB - avgA; 
             });
             
-            if(sortedPlayers.length === 0) {
-                container.innerHTML = "<p style='text-align:center; color:#64748b;'>Aucun joueur classé.</p>";
-                return;
-            }
+            if(sortedPlayers.length === 0) return container.innerHTML = "<p style='text-align:center; color:#64748b;'>Aucun joueur classé.</p>";
             
             container.innerHTML = sortedPlayers.map((p, index) => {
                 let s = calcGlobalDerivedStats(p.globalStats);
-                let winRate = p.globalStats.gamesPlayed ? Math.round((p.globalStats.wins / p.globalStats.gamesPlayed) * 100) : 0;
+                let winRate = (p.globalStats && p.globalStats.gamesPlayed) ? Math.round((p.globalStats.wins / p.globalStats.gamesPlayed) * 100) : 0;
+                let wins = p.globalStats ? p.globalStats.wins : 0;
+                let max = p.globalStats ? p.globalStats.bestTurn : 0;
                 let medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `<span style="color:#64748b;">${index + 1}.</span>`;
-                return `
-                <div class="data-card ranked-row">
-                    <div class="medal">${medal}</div>
-                    <div style="flex:1; margin-left:10px;">
-                        <div style="font-weight:700; color:#fff; font-size:16px;">${p.name}</div>
-                        <div style="font-size:12px; color:#94a3b8; margin-top:4px;">
-                            <strong style="color:#00e676;">${p.globalStats.wins}V</strong> - ${winRate}% de victoire <br>
-                            Moy: ${s.avg} | Max: ${p.globalStats.bestTurn}
-                        </div>
-                    </div>
-                </div>`;
+                return `<div class="data-card ranked-row"><div class="medal">${medal}</div><div style="flex:1; margin-left:10px;"><div style="font-weight:700; color:#fff; font-size:16px;">${p.name}</div><div style="font-size:12px; color:#94a3b8; margin-top:4px;"><strong style="color:#00e676;">${wins}V</strong> - ${winRate}% de victoire <br>Moy: ${s.avg} | Max: ${max}</div></div></div>`;
             }).join('');
-            
         } else {
             let sortedTeams = [...dbTeams].sort((a, b) => {
                 let sA = a.globalStats || {wins:0, gamesPlayed:0};
                 let sB = b.globalStats || {wins:0, gamesPlayed:0};
                 if (sB.wins !== sA.wins) return sB.wins - sA.wins; 
-                
                 let rA = sA.gamesPlayed ? sA.wins / sA.gamesPlayed : 0;
                 let rB = sB.gamesPlayed ? sB.wins / sB.gamesPlayed : 0;
                 return rB - rA; 
             });
             
-            if(sortedTeams.length === 0) {
-                container.innerHTML = "<p style='text-align:center; color:#64748b;'>Aucune équipe classée.</p>";
-                return;
-            }
+            if(sortedTeams.length === 0) return container.innerHTML = "<p style='text-align:center; color:#64748b;'>Aucune équipe classée.</p>";
             
             container.innerHTML = sortedTeams.map((t, index) => {
                 let stats = t.globalStats || {wins:0, gamesPlayed:0};
                 let winRate = stats.gamesPlayed ? Math.round((stats.wins / stats.gamesPlayed) * 100) : 0;
                 let medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `<span style="color:#64748b;">${index + 1}.</span>`;
-                return `
-                <div class="data-card ranked-row">
-                    <div class="medal">${medal}</div>
-                    <div style="flex:1; margin-left:10px;">
-                        <div style="font-weight:700; color:#fff; font-size:16px;">${t.name}</div>
-                        <div style="font-size:12px; color:#94a3b8; margin-top:4px;">
-                            <strong style="color:#00e676;">${stats.wins}V</strong> - ${winRate}% de victoire <br>
-                            Joués : ${stats.gamesPlayed} matchs
-                        </div>
-                    </div>
-                </div>`;
+                return `<div class="data-card ranked-row"><div class="medal">${medal}</div><div style="flex:1; margin-left:10px;"><div style="font-weight:700; color:#fff; font-size:16px;">${t.name}</div><div style="font-size:12px; color:#94a3b8; margin-top:4px;"><strong style="color:#00e676;">${stats.wins}V</strong> - ${winRate}% de victoire <br>Joués : ${stats.gamesPlayed} matchs</div></div></div>`;
             }).join('');
         }
     }
 
     function updateStartOrder() {
         const select = document.getElementById('starting-team-select');
+        if(!select) return;
         select.innerHTML = '<option value="random">🎲 Aléatoire</option>';
         document.querySelectorAll('.match-participant:checked').forEach(cb => {
-            let name = cb.dataset.type === 'solo' ? dbPlayers.find(p=>p.id===cb.value).name : dbTeams.find(t=>t.id===cb.value).name;
-            select.innerHTML += `<option value="${cb.value}">${name}</option>`;
+            let pObj = cb.dataset.type === 'solo' ? dbPlayers.find(p=>p.id===cb.value) : dbTeams.find(t=>t.id===cb.value);
+            if(pObj) select.innerHTML += `<option value="${cb.value}">${pObj.name}</option>`;
         });
     }
 
-    /* --- MOTEUR DE JEU --- */
     function formatMatchStats(matchStats) {
-        if (matchStats.dartsThrown === 0) return "MOY: 0.0 | MAX: 0";
+        if (!matchStats || matchStats.dartsThrown === 0) return "MOY: 0.0 | MAX: 0";
         let avg = (matchStats.scoreTotal / matchStats.turnsPlayed).toFixed(1);
         return `MOY: ${avg} | MAX: ${matchStats.bestTurn}`;
     }
@@ -518,7 +419,6 @@
         activeParticipants = Array.from(checkboxes).map(cb => {
             let isTeam = cb.dataset.type === 'team';
             let entity = isTeam ? dbTeams.find(t=>t.id===cb.value) : dbPlayers.find(p=>p.id===cb.value);
-            
             let pList = [];
             if(isTeam) {
                 entity.playerIds.forEach(pid => {
@@ -528,16 +428,7 @@
             } else {
                 pList.push({ id: entity.id, name: entity.name, matchStats: createEmptyGlobalStats() });
             }
-
-            return {
-                id: entity.id,
-                name: entity.name,
-                isTeam: isTeam,
-                players: pList,
-                rotationIndex: 0,
-                score: currentMode,
-                lastTurnStr: "En attente"
-            };
+            return { id: entity.id, name: entity.name, isTeam: isTeam, players: pList, rotationIndex: 0, score: currentMode, lastTurnStr: "En attente" };
         });
 
         const startingChoice = document.getElementById('starting-team-select').value;
@@ -552,7 +443,6 @@
         document.getElementById('game-title').innerText = `MODE ${currentMode}`;
         document.getElementById('setup-screen').classList.add('hidden');
         document.getElementById('game-screen').classList.remove('hidden');
-        
         updateScoreboard(); updateTurnUI();
     }
 
@@ -561,45 +451,28 @@
         container.innerHTML = "";
         activeParticipants.forEach((part, index) => {
             const isActive = (index === activeParticipantIndex);
-            
             let playersHtml = part.players.map((pObj, pIdx) => {
                 let isCurrentPlayer = (isActive && pIdx === part.rotationIndex);
                 let color = isCurrentPlayer ? '#00e676' : '#94a3b8';
-                return `
-                    <div style="margin-top: 6px;">
-                        <div class="stat-name" style="color: ${color};">${isCurrentPlayer ? '🎯 ' : ''}${pObj.name}</div>
-                        <div class="stat-line">${formatMatchStats(pObj.matchStats)}</div>
-                    </div>
-                `;
+                return `<div style="margin-top: 6px;"><div class="stat-name" style="color: ${color};">${isCurrentPlayer ? '🎯 ' : ''}${pObj.name}</div><div class="stat-line">${formatMatchStats(pObj.matchStats)}</div></div>`;
             }).join('');
-
-            container.innerHTML += `
-                <div class="player-row ${isActive ? 'active' : ''}">
-                    <div style="flex:1;">
-                        <div class="team-title">${part.isTeam ? '👥 ' + part.name : '👤 ' + part.name}</div>
-                        ${playersHtml}
-                        <div style="font-size: 11px; color: #64748b; margin-top: 8px; font-style: italic;">Volée préc : ${part.lastTurnStr}</div>
-                    </div>
-                    <div class="player-score" style="margin-left: 15px;">${part.score}</div>
-                </div>
-            `;
+            container.innerHTML += `<div class="player-row ${isActive ? 'active' : ''}"><div style="flex:1;"><div class="team-title">${part.isTeam ? '👥 ' + part.name : '👤 ' + part.name}</div>${playersHtml}<div style="font-size: 11px; color: #64748b; margin-top: 8px; font-style: italic;">Volée préc : ${part.lastTurnStr}</div></div><div class="player-score" style="margin-left: 15px;">${part.score}</div></div>`;
         });
     }
 
     function setMultiplier(val) {
         currentMultiplier = val;
         document.querySelectorAll('.btn-mult').forEach(b => b.classList.remove('active'));
-        document.getElementById(`btn-mult-${val}`).classList.add('active');
+        let btn = document.getElementById(`btn-mult-${val}`);
+        if(btn) btn.classList.add('active');
     }
 
     function pressNumber(num) {
         if (currentDarts.length >= 3) return;
         if (num === 25 && currentMultiplier === 3) currentMultiplier = 1; 
         if (num === 0) currentMultiplier = 1;
-
         let score = num * currentMultiplier;
         let text = num === 0 ? "Miss" : num === 25 ? (currentMultiplier === 2 ? "D-Bull" : "Bull") : (currentMultiplier === 2 ? "D" + num : currentMultiplier === 3 ? "T" + num : num.toString());
-
         currentDarts.push({ score, text });
         setMultiplier(1); updateTurnUI();
     }
@@ -635,13 +508,11 @@
 
     function confirmTurn() {
         if (currentDarts.length === 0) return;
-        
         historyStack.push({ activeParticipants: JSON.parse(JSON.stringify(activeParticipants)), activeParticipantIndex });
 
         let turnScore = currentDarts.reduce((acc, d) => acc + d.score, 0);
         let part = activeParticipants[activeParticipantIndex];
         let pObj = part.players[part.rotationIndex];
-
         let actualPointsScored = turnScore;
 
         if (part.score - turnScore === 0) {
@@ -668,19 +539,15 @@
         if (part.score === 0) {
             updateScoreboard(); 
             finalizeGame(part.id); 
-            
-            // Affichage de la nouvelle modale de victoire animée
             document.getElementById('victory-team').innerText = part.name.toUpperCase();
-            document.getElementById('victory-player').innerText = `Félicitations à ${pObj.name} pour le finish !`;
+            document.getElementById('victory-player').innerText = `Félicitations à ${pObj.name} !`;
             document.getElementById('victory-modal').classList.remove('hidden');
-            
-            return; // Bloque la fonction pour ne pas passer au tour suivant
+            return; 
         }
 
         part.rotationIndex = (part.rotationIndex + 1) % part.players.length;
         activeParticipantIndex = (activeParticipantIndex + 1) % activeParticipants.length;
         currentDarts = []; setMultiplier(1);
-        
         updateScoreboard(); updateTurnUI();
     }
 
@@ -701,7 +568,6 @@
 
         activeParticipants.forEach(part => {
             let isParticipantWinner = (part.id === winnerParticipantId);
-            
             if (part.isTeam) {
                 let dbTeam = dbTeams.find(t => t.id === part.id);
                 if (dbTeam) {
@@ -710,16 +576,13 @@
                     if (isParticipantWinner) dbTeam.globalStats.wins += 1;
                 }
             }
-            
             part.players.forEach(pMatchData => {
                 let dbProfile = dbPlayers.find(p => p.id === pMatchData.id);
                 if(dbProfile) {
                     let g = dbProfile.globalStats;
                     let m = pMatchData.matchStats;
-                    
                     g.gamesPlayed += 1;
                     if(isParticipantWinner) g.wins += 1;
-                    
                     g.dartsThrown += m.dartsThrown;
                     g.doubles += m.doubles;
                     g.triples += m.triples;
@@ -733,68 +596,36 @@
     }
 
     function loadHistory() {
-        const list = document.getElementById('history-list');
-        let history = JSON.parse(localStorage.getItem('dartsHistory') || '[]');
-        
-        if (!Array.isArray(history) || history.length === 0) {
-            list.innerHTML = "<p style='text-align:center; color:#64748b;'>Aucune partie.</p>";
-            return;
-        }
-
         try {
+            const list = document.getElementById('history-list');
+            let history = JSON.parse(localStorage.getItem('dartsHistory') || '[]');
+            if (!Array.isArray(history) || history.length === 0) return list.innerHTML = "<p style='text-align:center; color:#64748b;'>Aucune partie.</p>";
+
             list.innerHTML = history.map(game => {
                 if (!game.participants) return "";
-                
-                return `
-                <div class="data-card">
-                    <div class="data-card-header">
-                        <strong style="color: #00e676;">MODE ${game.mode || '??'}</strong>
-                        <span style="color: #64748b; font-size:12px;">${game.date || ''}</span>
-                    </div>
-                    <div>
-                        ${game.participants.map(part => {
-                            let isWinner = (part.id === game.winnerId);
-                            
-                            let playersStatsHtml = "";
-                            if (part.players) {
-                                playersStatsHtml = part.players.map(p => {
-                                    let s = p.matchStats || p.stats;
-                                    if(!s) return "";
-                                    let avg = s.turnsPlayed > 0 ? (s.scoreTotal / s.turnsPlayed).toFixed(1) : "0.0";
-                                    return \`<div style="font-size: 11px; color: #64748b; font-family: monospace; margin-left: 10px;">↳ \${p.name}: MOY: \${avg} | MAX: \${s.bestTurn}</div>\`;
-                                }).join('');
-                            }
-
-                            return `
-                            <div style="margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px dashed #242c3d;">
-                                <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
-                                    <span style="color: ${isWinner ? '#fff' : '#94a3b8'}; font-weight: ${isWinner ? '700' : '400'}">
-                                        ${part.name || 'Joueur'} ${isWinner ? '🏆' : ''}
-                                    </span>
-                                    <span style="color: ${part.score === 0 ? '#00e676' : '#cbd5e1'}">${part.score} pts restants</span>
-                                </div>
-                                ${playersStatsHtml}
-                            </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-                `;
+                return `<div class="data-card"><div class="data-card-header"><strong style="color: #00e676;">MODE ${game.mode || '??'}</strong><span style="color: #64748b; font-size:12px;">${game.date || ''}</span></div><div>${game.participants.map(part => {
+                    let isWinner = (part.id === game.winnerId);
+                    let playersStatsHtml = "";
+                    if (part.players) {
+                        playersStatsHtml = part.players.map(p => {
+                            let s = p.matchStats || p.stats;
+                            if(!s) return "";
+                            let avg = s.turnsPlayed > 0 ? (s.scoreTotal / s.turnsPlayed).toFixed(1) : "0.0";
+                            return `<div style="font-size: 11px; color: #64748b; font-family: monospace; margin-left: 10px;">↳ ${p.name}: MOY: ${avg} | MAX: ${s.bestTurn}</div>`;
+                        }).join('');
+                    }
+                    return `<div style="margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px dashed #242c3d;"><div style="display:flex; justify-content:space-between; margin-bottom: 4px;"><span style="color: ${isWinner ? '#fff' : '#94a3b8'}; font-weight: ${isWinner ? '700' : '400'}">${part.name || 'Joueur'} ${isWinner ? '🏆' : ''}</span><span style="color: ${part.score === 0 ? '#00e676' : '#cbd5e1'}">${part.score} pts</span></div>${playersStatsHtml}</div>`;
+                }).join('')}</div></div>`;
             }).join('');
-        } catch(e) {
-            console.error("Erreur historique :", e);
-            list.innerHTML = "<p style='text-align:center; color:#ff3d00;'>Historique corrompu.</p>";
-        }
+        } catch(e) { document.getElementById('history-list').innerHTML = "<p style='text-align:center; color:#ff3d00;'>Historique corrompu.</p>"; }
     }
 
     function clearHistory() {
-        if (confirm("Voulez-vous supprimer tout l'historique de matchs ? (Les stats globales ne seront pas touchées)")) {
-            localStorage.removeItem('dartsHistory'); loadHistory();
-        }
+        if (confirm("Voulez-vous supprimer l'historique ?")) { localStorage.removeItem('dartsHistory'); loadHistory(); }
     }
 
     function abortGame() {
-        if(confirm("Quitter la partie en cours ? (Aucune statistique ne sera sauvegardée)")) quitToMenu();
+        if(confirm("Quitter la partie ?")) quitToMenu();
     }
 
     function quitToMenu() {
