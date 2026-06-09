@@ -3,58 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Darts Master</title>
+    <title>Darts Master Scorer</title>
     <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b0e14">
+    <!--[span_0](start_span)[span_0](end_span)[span_1](start_span)[span_1](end_span)[span_2](start_span)[span_2](end_span) -->
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background-color: #0b0e14; color: #fff; padding: 15px; }
+        body { background-color: #0b0e14; color: #f1f5f9; padding: 12px; }
         .hidden { display: none !important; }
-        .card { background: #131722; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
-        .tab-btn { padding: 10px; background: #1e2433; display: inline-block; border-radius: 8px; cursor: pointer; }
-        .tab-btn.active { background: #00e676; color: #000; }
-        .btn-primary { width: 100%; padding: 15px; background: #00e676; border: none; border-radius: 8px; font-weight: bold; margin-top: 10px; }
-        .input-group { display: flex; gap: 5px; margin-bottom: 10px; }
-        input { flex: 1; padding: 10px; border-radius: 5px; border: none; }
-        .key { padding: 15px; background: #1e2433; border: none; color: #fff; border-radius: 5px; }
+        .card { background: #131722; padding: 18px; border-radius: 16px; margin-bottom: 16px; border: 1px solid #1e2433; }
+        .tab-btn { padding: 10px; background: #1e2433; display: inline-block; border-radius: 8px; cursor: pointer; color: #94a3b8; }
+        .tab-btn.active { color: #00e676; }
+        .btn-primary { width: 100%; padding: 15px; background: #00e676; border: none; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+        .input-group { display: flex; gap: 8px; margin-bottom: 16px; }
+        input, select { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #242c3d; background: #0b0e14; color: white; }
+        .key { padding: 15px; background: #1e2433; border: none; color: #fff; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
-<div id="app">
-    <div id="menu" class="card">
-        <div onclick="switchTab('match')"><span class="tab-btn active" id="btn-match">Match</span></div>
-        <div id="setup-match">
+<div class="container">
+    <div id="setup-screen" class="card">
+        <div id="tab-match" class="tab-btn active" onclick="switchView('match')">Match</div>
+        <div id="tab-hist" class="tab-btn" onclick="switchView('hist')">Historique</div>
+        
+        <div id="view-match">
+            <h3>Mode</h3>
+            <select id="mode"><option value="501">501</option><option value="301">301</option></select>
             <h3>Joueurs</h3>
-            <div id="players-list"></div>
-            <input type="text" id="p-name" placeholder="Nom du joueur">
-            <button onclick="addPlayer()">Ajouter Joueur</button>
-            <button class="btn-primary" onclick="startMatch()">LANCER PARTIE</button>
+            <div id="p-list"></div>
+            <input type="text" id="p-name" placeholder="Nom">
+            <button onclick="addPlayer()">Ajouter</button>
+            <button class="btn-primary" onclick="startMatch()">LANCER</button>
         </div>
-        <div id="history-view" class="hidden">
+        <div id="view-hist" class="hidden">
             <h3>Historique</h3>
-            <div id="hist-content"></div>
-            <button onclick="clearHistory()">Vider</button>
+            <div id="hist-list"></div>
+            <button onclick="clearHistory()">Vider tout</button>
         </div>
     </div>
-    <div id="game" class="card hidden">
+    <div id="game-screen" class="card hidden">
         <h2 id="score-display">501</h2>
-        <div id="controls">
-            <input type="number" id="dart-input">
-            <button onclick="submitScore()">OK</button>
-        </div>
+        <input type="number" id="dart-input">
+        <button onclick="submitScore()">OK</button>
+        <button onclick="quitGame()">Quitter</button>
     </div>
 </div>
 <script>
     let players = JSON.parse(localStorage.getItem('players') || '[]');
     let history = JSON.parse(localStorage.getItem('hist') || '[]');
 
+    function switchView(v) {
+        document.getElementById('view-match').classList.toggle('hidden', v !== 'match');
+        document.getElementById('view-hist').classList.toggle('hidden', v !== 'hist');
+    }
+
     function addPlayer() {
         let name = document.getElementById('p-name').value;
-        if(name) { players.push({name, score: 501}); localStorage.setItem('players', JSON.stringify(players)); render(); }
+        if(name) { players.push({name, score: parseInt(document.getElementById('mode').value)}); localStorage.setItem('players', JSON.stringify(players)); render(); }
     }
-    
+
     function startMatch() {
-        document.getElementById('menu').classList.add('hidden');
-        document.getElementById('game').classList.remove('hidden');
+        if(players.length > 0) { document.getElementById('setup-screen').classList.add('hidden'); document.getElementById('game-screen').classList.remove('hidden'); }
     }
 
     function submitScore() {
@@ -64,22 +73,21 @@
             history.unshift({date: new Date().toLocaleDateString(), winner: players[0].name});
             localStorage.setItem('hist', JSON.stringify(history));
             alert("Victoire !");
-            location.reload();
+            quitGame();
         }
         document.getElementById('score-display').innerText = players[0].score;
     }
 
     function render() {
-        document.getElementById('players-list').innerHTML = players.map(p => `<div>${p.name}</div>`).join('');
-    }
-    
-    function switchTab(t) {
-        document.getElementById('setup-match').classList.toggle('hidden', t !== 'match');
-        document.getElementById('history-view').classList.toggle('hidden', t !== 'match');
+        document.getElementById('p-list').innerHTML = players.map(p => `<div>${p.name}</div>`).join('');
+        // Rendu sécurisé de l'historique
+        try {
+            document.getElementById('hist-list').innerHTML = history.map(h => `<div>${h.date} - ${h.winner}</div>`).join('');
+        } catch(e) { document.getElementById('hist-list').innerHTML = "Erreur historique"; }
     }
 
-    function clearHistory() { localStorage.removeItem('hist'); location.reload(); }
-
+    function clearHistory() { localStorage.removeItem('hist'); history=[]; render(); }
+    function quitGame() { location.reload(); }
     render();
 </script>
 </body>
