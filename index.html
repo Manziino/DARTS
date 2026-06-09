@@ -19,7 +19,7 @@
         .card { background: #131722; padding: 18px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); margin-bottom: 16px; border: 1px solid #1e2433; }
         .hidden { display: none !important; }
         
-        /* Modern App Tabs - scrollable if too many */
+        /* Modern App Tabs */
         .tab-container { display: flex; background: #1e2433; border-radius: 12px; padding: 4px; margin-bottom: 20px; overflow-x: auto; scrollbar-width: none;}
         .tab-btn { flex: 1; text-align: center; padding: 10px; cursor: pointer; color: #94a3b8; font-weight: 700; font-size: 13px; border-radius: 8px; transition: all 0.2s; white-space: nowrap; }
         .tab-btn.active { color: #00e676; background: #131722; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
@@ -149,7 +149,7 @@
         <!-- ONGLET HISTORIQUE -->
         <div id="setup-historique" class="hidden">
             <div id="history-list"></div>
-            <button class="btn-quick" onclick="clearHistory()" style="margin-top: 15px; color: #ff3d00; border-color: #ff3d00; width: 100%; padding: 12px;">Vider l'historique</button>
+            <button class="btn-quick" onclick="clearHistory()" style="margin-top: 15px; color: #ff3d00; border-color: #ff3d00; width: 100%; padding: 12px;">Vider l'historique complet</button>
         </div>
     </div>
 
@@ -187,7 +187,7 @@
     let dbPlayers = [];
     let dbTeams = [];
     
-    let activeParticipants = []; // Mix of solo players and teams for the current match
+    let activeParticipants = []; 
     let activeParticipantIndex = 0;
     
     let currentDarts = [];
@@ -239,7 +239,6 @@
     function deletePlayer(id) {
         if (!confirm("Supprimer ce joueur et TOUTES ses statistiques à vie ?")) return;
         dbPlayers = dbPlayers.filter(p => p.id !== id);
-        // Clean up teams containing this player
         dbTeams = dbTeams.map(t => {
             t.playerIds = t.playerIds.filter(pid => pid !== id);
             return t;
@@ -279,7 +278,6 @@
     }
 
     function renderAllViews() {
-        // Onglet Joueurs (DB)
         const dbPlayersContainer = document.getElementById('db-players-list');
         if (dbPlayers.length === 0) dbPlayersContainer.innerHTML = "<p style='color:#64748b; font-size:13px; text-align:center;'>Aucun joueur. Créez-en un au-dessus !</p>";
         else dbPlayersContainer.innerHTML = dbPlayers.map(p => {
@@ -301,7 +299,6 @@
             </div>`;
         }).join('');
 
-        // Onglet Equipes (DB Creation)
         document.getElementById('team-creation-players-list').innerHTML = dbPlayers.map(p => `
             <label class="checkbox-card">
                 <input type="checkbox" value="${p.id}">
@@ -325,7 +322,6 @@
             </div>`;
         }).join('');
 
-        // Onglet Jouer (Sélection Match)
         document.getElementById('play-players-list').innerHTML = dbPlayers.map(p => `
             <label class="checkbox-card">
                 <input type="checkbox" value="${p.id}" class="match-participant" data-type="solo" onchange="updateStartOrder()">
@@ -371,7 +367,6 @@
             let isTeam = cb.dataset.type === 'team';
             let entity = isTeam ? dbTeams.find(t=>t.id===cb.value) : dbPlayers.find(p=>p.id===cb.value);
             
-            // Build player list for this participant
             let pList = [];
             if(isTeam) {
                 entity.playerIds.forEach(pid => {
@@ -508,7 +503,6 @@
             part.lastTurnStr = `${pObj.name} : ${currentDarts.map(d => d.text).join(' / ')} (${turnScore})`;
         }
 
-        // Stats temporaires du match pour affichage
         pObj.matchStats.turnsPlayed += 1;
         pObj.matchStats.dartsThrown += currentDarts.length;
         pObj.matchStats.scoreTotal += actualPointsScored;
@@ -521,7 +515,7 @@
 
         if (part.score === 0) {
             updateScoreboard(); 
-            finalizeGame(part.id); // Intègre les stats dans la DB globale
+            finalizeGame(part.id); 
             alert(`🎉 VICTOIRE : ${part.name.toUpperCase()} !\nFélicitations à ${pObj.name} pour le finish !`);
             return quitToMenu();
         }
@@ -533,9 +527,7 @@
         updateScoreboard(); updateTurnUI();
     }
 
-    /* --- FINALISATION ET SAUVEGARDE GLOBALE --- */
     function finalizeGame(winnerParticipantId) {
-        // Ajout à l'historique
         let history = JSON.parse(localStorage.getItem('dartsHistory') || '[]');
         history.unshift({
             date: new Date().toLocaleString('fr-FR', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit'}),
@@ -545,7 +537,6 @@
         });
         localStorage.setItem('dartsHistory', JSON.stringify(history));
 
-        // Transfert des stats du match vers les profils globaux
         activeParticipants.forEach(part => {
             let isParticipantWinner = (part.id === winnerParticipantId);
             part.players.forEach(pMatchData => {
@@ -572,32 +563,59 @@
     function loadHistory() {
         const list = document.getElementById('history-list');
         let history = JSON.parse(localStorage.getItem('dartsHistory') || '[]');
-        if (history.length === 0) return list.innerHTML = "<p style='text-align:center; color:#64748b;'>Aucune partie.</p>";
+        if (history.length === 0) return list.innerHTML = "<p style='text-align:center; color:#64748b;'>Aucune partie dans l'historique.</p>";
 
-        list.innerHTML = history.map(game => `
-            <div class="data-card">
-                <div class="data-card-header">
-                    <strong style="color: #00e676;">MODE ${game.mode}</strong>
-                    <span style="color: #64748b; font-size:12px;">${game.date}</span>
-                </div>
-                <div>
-                    ${game.participants.map(part => `
-                        <div style="margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px dashed #242c3d;">
-                            <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
-                                <span style="color: ${part.id === game.winnerId ? '#fff' : '#94a3b8'}; font-weight: ${part.id === game.winnerId ? '700' : '400'}">
-                                    ${part.name} ${part.id === game.winnerId ? '🏆' : ''}
-                                </span>
-                                <span style="color: ${part.score === 0 ? '#00e676' : '#cbd5e1'}">${part.score} pts restants</span>
+        try {
+            list.innerHTML = history.map(game => {
+                // Rétrocompatibilité absolue V4 et V5
+                let parts = game.participants || game.teams || [];
+                let winnerName = game.winnerId ? "" : (game.winner || "");
+
+                return `
+                <div class="data-card">
+                    <div class="data-card-header">
+                        <strong style="color: #00e676;">MODE ${game.mode}</strong>
+                        <span style="color: #64748b; font-size:12px;">${game.date}</span>
+                    </div>
+                    <div>
+                        ${parts.map(part => {
+                            let isWinner = game.winnerId ? (part.id === game.winnerId) : (part.name === winnerName);
+                            
+                            // Restauration des stats détaillées sous chaque joueur dans l'historique
+                            let playersStatsHtml = "";
+                            if (part.players) {
+                                playersStatsHtml = part.players.map(p => {
+                                    let s = p.matchStats || p.stats;
+                                    if(!s) return "";
+                                    let avg = s.turnsPlayed > 0 ? (s.scoreTotal / s.turnsPlayed).toFixed(1) : "0.0";
+                                    return \`<div style="font-size: 11px; color: #64748b; font-family: monospace; margin-left: 10px;">↳ \${p.name}: MOY: \${avg} | MAX: \${s.bestTurn}</div>\`;
+                                }).join('');
+                            }
+
+                            return `
+                            <div style="margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px dashed #242c3d;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+                                    <span style="color: ${isWinner ? '#fff' : '#94a3b8'}; font-weight: ${isWinner ? '700' : '400'}">
+                                        ${part.name} ${isWinner ? '🏆' : ''}
+                                    </span>
+                                    <span style="color: ${part.score === 0 ? '#00e676' : '#cbd5e1'}">${part.score} pts restants</span>
+                                </div>
+                                ${playersStatsHtml}
                             </div>
-                        </div>
-                    `).join('')}
+                            `;
+                        }).join('')}
+                    </div>
                 </div>
-            </div>
-        `).join('');
+                `;
+            }).join('');
+        } catch (e) {
+            console.error("Erreur historique :", e);
+            list.innerHTML = "<p style='text-align:center; color:#ff3d00;'>Une erreur a eu lieu avec un ancien format. Veuillez vider l'historique.</p>";
+        }
     }
 
     function clearHistory() {
-        if (confirm("Voulez-vous supprimer tout l'historique de matchs ? (Les stats des joueurs ne seront pas touchées)")) {
+        if (confirm("Voulez-vous supprimer tout l'historique de matchs ? (Les stats globales des joueurs ne seront pas touchées)")) {
             localStorage.removeItem('dartsHistory'); loadHistory();
         }
     }
