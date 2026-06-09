@@ -218,23 +218,22 @@
     let currentMultiplier = 1;
     let historyStack = [];
 
-        // --- MOTEUR AUDIO ---
+    // --- MOTEUR AUDIO FRANÇAIS NATUREL ---
     let audioCtx;
     let isAudioOn = true;
     let callerVoice = null;
 
-    // Charger les voix pour trouver un commentateur masculin britannique
     function loadVoices() {
         let voices = window.speechSynthesis.getVoices();
-        // On cherche en priorité une voix d'homme en anglais britannique
-        callerVoice = voices.find(v => v.lang === 'en-GB' && (v.name.includes('Male') || v.name.includes('Daniel') || v.name.includes('Oliver')))
-                   || voices.find(v => v.lang === 'en-GB')
-                   || voices.find(v => v.lang.startsWith('en'));
+        // Recherche prioritaire d'une voix masculine française (Thomas, Paul, Nicolas, ou mentionnant "male/homme")
+        callerVoice = voices.find(v => v.lang.includes('fr') && (v.name.includes('Thomas') || v.name.includes('Paul') || v.name.includes('Nicolas') || v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('homme')))
+                   || voices.find(v => v.lang === 'fr-FR')
+                   || voices.find(v => v.lang.startsWith('fr'));
     }
 
     if ('speechSynthesis' in window) {
         window.speechSynthesis.onvoiceschanged = loadVoices;
-        loadVoices(); // Initialisation immédiate
+        loadVoices();
     }
 
     function initAudio() {
@@ -270,27 +269,25 @@
 
     function announceCaller(text, is180 = false) {
         if (!isAudioOn || !('speechSynthesis' in window)) return;
-        window.speechSynthesis.cancel(); // Stoppe le son précédent
+        window.speechSynthesis.cancel(); 
         
         let msg = new SpeechSynthesisUtterance(text);
         
-        // Applique la voix masculine britannique si trouvée
         if (callerVoice) msg.voice = callerVoice;
-        msg.lang = 'en-GB'; 
+        msg.lang = 'fr-FR'; // Forcer le français
         
-        // Réglage "Annonceur de compétition"
+        // Retrait de la distorsion robotique : on joue sur le rythme plutôt que la voix grave
         if (is180) {
-            msg.rate = 0.9;  // Le "One Hundred and Eighty" est un peu allongé
-            msg.pitch = 1.3; // Excitation : la voix part dans les aigus
+            msg.rate = 1.1; // Plus rapide et enthousiaste
+            msg.pitch = 1.2; // Un tout petit peu plus aigu pour marquer l'excitation
         } else {
-            msg.rate = 0.95; // Rythme naturel et posé
-            msg.pitch = 0.7; // Voix très grave, type commentateur
+            msg.rate = 1.05; // Rythme naturel et dynamique
+            msg.pitch = 1.0; // Ton neutre pour éviter l'effet robot
         }
         
         window.speechSynthesis.speak(msg);
     }
     // ----------------------
-
 
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(err => console.log(err)); }
 
@@ -487,7 +484,6 @@
         const checkboxes = document.querySelectorAll('.match-participant:checked');
         if (checkboxes.length < 1) return alert("Sélectionnez au moins un participant !");
         
-        // Initialisation de l'audio au premier clic humain (Requis par les navigateurs)
         initAudio(); 
 
         activeParticipants = Array.from(checkboxes).map(cb => {
@@ -518,7 +514,8 @@
         document.getElementById('setup-screen').classList.add('hidden');
         document.getElementById('game-screen').classList.remove('hidden');
         
-        announceCaller("Game on!");
+        // Annonce vocale de début (Français)
+        announceCaller("Que le match commence !");
         updateScoreboard(); updateTurnUI();
     }
 
@@ -548,7 +545,7 @@
         if (num === 25 && currentMultiplier === 3) currentMultiplier = 1; 
         if (num === 0) currentMultiplier = 1;
         
-        playDartThud(); // <-- Le fameux son de fléchette !
+        playDartThud();
 
         let score = num * currentMultiplier;
         let text = num === 0 ? "Miss" : num === 25 ? (currentMultiplier === 2 ? "D-Bull" : "Bull") : (currentMultiplier === 2 ? "D" + num : currentMultiplier === 3 ? "T" + num : num.toString());
@@ -600,18 +597,18 @@
         } else if (part.score - turnScore < 0) {
             actualPointsScored = 0; 
             part.lastTurnStr = `💥 Bust ! (${pObj.name})`;
-            announceCaller("No score.");
+            announceCaller("Zéro !");
         } else {
             part.score -= turnScore;
             part.lastTurnStr = `${pObj.name} : ${currentDarts.map(d => d.text).join(' / ')} (${turnScore})`;
             
-            // Appel vocal du score !
+            // Appel vocal du score en français !
             if (turnScore === 180) {
-                announceCaller("One hundred and eighty!", true);
+                announceCaller("Cent quatre-vingt !", true);
             } else if (turnScore > 0) {
                 announceCaller(turnScore.toString());
             } else {
-                announceCaller("No score.");
+                announceCaller("Zéro point.");
             }
         }
 
@@ -629,8 +626,8 @@
             updateScoreboard(); 
             finalizeGame(part.id); 
             
-            // L'annonce vocale épique de fin de match
-            announceCaller(`Game, shot, and the match! ${part.name}!`);
+            // L'annonce vocale épique de fin de match (Français)
+            announceCaller(`Jeu, set et match ! ${part.name} !`);
 
             document.getElementById('victory-team').innerText = part.name.toUpperCase();
             document.getElementById('victory-player').innerText = `Félicitations à ${pObj.name} !`;
