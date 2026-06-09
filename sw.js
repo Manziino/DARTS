@@ -1,31 +1,19 @@
-const CACHE_NAME = 'darts-v8-final';
-const ASSETS = ['index.html', 'manifest.json'];
-
 self.addEventListener('install', (e) => {
-  self.skipWaiting();
-  e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
+  self.skipWaiting(); // Force l'installation immédiate
 });
 
-// C'EST CETTE PARTIE QUI DÉBLOQUE LES MISES À JOUR
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
-      );
+      // Détruit TOUS les anciens caches sans exception
+      return Promise.all(keys.map((k) => caches.delete(k))); 
+    }).then(() => {
+      return self.clients.claim(); // Prend le contrôle de la page immédiatement
     })
   );
 });
 
-// STRATÉGIE "NETWORK FIRST"
 self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    fetch(e.request).catch(() => {
-      return caches.match(e.request);
-    })
-  );
+  // Contourne le cache et va TOUJOURS chercher la version en ligne
+  e.respondWith(fetch(e.request));
 });
