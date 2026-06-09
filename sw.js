@@ -1,9 +1,5 @@
-const CACHE_NAME = 'darts-v7';
+const CACHE_NAME = 'darts-v5-fixed';
 const ASSETS = ['index.html', 'manifest.json'];
-
-self.addEventListener('activate', (e) => {
-  e.waitUntil(caches.keys().then((keys) => Promise.all(keys.map(k => caches.delete(k)))));
-});
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
